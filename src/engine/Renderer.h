@@ -1,4 +1,5 @@
 #pragma once
+#include "Vec2D.h"
 
 class EngineObject;
 struct SDL_Renderer;
@@ -9,9 +10,9 @@ protected:
     SDL_Renderer *sdlRenderer;
 public:
     Renderer(EngineObject *object);
-    float x = 0;
-    float y = 0;
-    float relativeX = 0;
-    float relativeY = 0;
+    Vec2D pos = {0, 0};
+    Vec2D globalPos = {0, 0};
+
+    void updateGlobalPosAndRender();
     virtual void render() = 0;
 };

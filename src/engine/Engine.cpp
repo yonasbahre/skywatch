@@ -127,7 +127,7 @@ inline void Engine::render() {
         stack.pop_back();
 
         if (curr->renderer) {
-            curr->renderer->render();
+            curr->renderer->updateGlobalPosAndRender();
         }
         for (EngineObject *child : curr->children) {
             stack.push_back(child);

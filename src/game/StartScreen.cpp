@@ -28,8 +28,8 @@ StartScreen::StartScreenRenderer::StartScreenRenderer(StartScreen *object)
         {255, 255, 255}
     );
     titleTexture = SDL_CreateTextureFromSurface(sdlRenderer, titleSurface);
-    titleRect.x = x;
-    titleRect.y = y;
+    titleRect.x = pos.x;
+    titleRect.y = pos.y;
     titleRect.w = titleSurface->w;
     titleRect.h = titleSurface->h;
     // SDL_QueryTexture(titleTexture, NULL, NULL, &titleRect.x, &titleRect.y);
