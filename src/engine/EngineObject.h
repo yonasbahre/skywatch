@@ -12,7 +12,7 @@ public:
         EngineObject *parent = nullptr, 
         bool startOnCreation = false
     );
-    ~EngineObject();
+    virtual ~EngineObject();
 
     void registerAndStart();
     void registerChild(EngineObject *child);

@@ -6,12 +6,14 @@
 #include "Constants.h"
 
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
 Engine *Engine::engineSingleton = nullptr;
 
 Engine::Engine() {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
+    IMG_Init(IMG_INIT_PNG);
     
     window = SDL_CreateWindow(
         "Skywatch", 
@@ -35,6 +37,7 @@ Engine::~Engine() {
     delete currLevel;
     delete eventMgr;
 
+    IMG_Quit();
     TTF_Quit();
     SDL_Quit();
     delete engineSingleton;
@@ -98,6 +101,10 @@ inline void Engine::update() {
         }
     }
     eventMgr->updateEvents();
+    if (eventMgr->keyStates[SDL_SCANCODE_ESCAPE]) {
+        quit = true;
+        return;
+    }
 
     std::vector<EngineObject*> stack = globalObjects;
     if (currLevel) {

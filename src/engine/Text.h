@@ -11,9 +11,13 @@ class Text {
     SDL_Rect sdlRect;
 
     SDL_Color color = {255, 255, 255};
-    std::string textContent = "";
+    std::string textContent = "Sample Text";
     std::string fontPath = "";
     int ptSize = 12;
+    bool isCentered = false;
+    bool isVisible = true;
+
+    void updateSurfaceAndTexture();
 
 public:
     Text(
@@ -30,4 +34,9 @@ public:
     void setPos(Vec2D pos);
     void setText(std::string newText);
     void setPtSize(int ptSize);
+    void setIsCentered(bool isCentered);
+    void setIsVisible(bool isVisible);
+
+    Vec2D getDimensions();
+    bool getIsVisible();
 };

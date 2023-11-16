@@ -1,49 +1,77 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_thread.h>
 #include "Constants.h"
 #include "StartScreen.h"
 #include "Engine.h"
 #include "Renderer.h"
+#include "LevelDirectory.h"
 
 StartScreen::StartScreen() {
+    eventMgr = EventManager::getManager();
     renderer = new StartScreenRenderer(this);
 }
 
-StartScreen::~StartScreen() {}
+StartScreen::~StartScreen() {
+    SDL_WaitThread(flasherThread, nullptr);
+}
 
-void StartScreen::start() {}
+void StartScreen::start() {
+    flasherThread = SDL_CreateThread(
+        flashPressStartText,
+        "flasher",
+        this
+    );
+}
 
-void StartScreen::update() {}
+void StartScreen::update() {
+    if (eventMgr->keyStates[SDL_SCANCODE_RETURN]) {
+        isFlashing = false;
+        Engine::getEngine()->loadLevel(LEVEL_1);
+    }
+}
 
 StartScreen::StartScreenRenderer::StartScreenRenderer(StartScreen *object)
     : Renderer(object) {
-    // AlteHaasBold = TTF_OpenFont("assets/AlteHaasGroteskBold.ttf", 288);
-    // if (!AlteHaasBold) {
-    //     std::cout << "Error: " << SDL_GetError() << std::endl;
-    // }
-    
-    // titleSurface = TTF_RenderText_Blended(
-    //     AlteHaasBold,
-    //     "Skywatch",
-    //     {255, 255, 255}
-    // );
-    // titleTexture = SDL_CreateTextureFromSurface(sdlRenderer, titleSurface);
-    // titleRect.x = pos.x;
-    // titleRect.y = pos.y;
-    // titleRect.w = titleSurface->w;
-    // titleRect.h = titleSurface->h;
-    // SDL_QueryTexture(titleTexture, NULL, NULL, &titleRect.x, &titleRect.y);
+    title.setText("Skywatch");
+    title.setIsCentered(true);
+    title.setPos(globalPos + Vec2D(
+        (SCREEN_WIDTH / 2),
+        (SCREEN_HEIGHT / 2) - 100
+    ));
+
+    pressToStart.setText("Press enter to start");
+    pressToStart.setIsCentered(true);
+    Vec2D startDimensions = pressToStart.getDimensions();
+    pressToStart.setPos(globalPos + Vec2D(
+        (SCREEN_WIDTH / 2),
+        (SCREEN_HEIGHT / 2) + 100
+    ));
 }
 
-StartScreen::StartScreenRenderer::~StartScreenRenderer() {
-    // SDL_FreeSurface(titleSurface);
-    // SDL_DestroyTexture(titleTexture);
-    // TTF_CloseFont(AlteHaasBold);
-}
+StartScreen::StartScreenRenderer::~StartScreenRenderer() {}
 
 void StartScreen::StartScreenRenderer::render() {
-    // SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 255, 255);
-    // SDL_RenderCopy(sdlRenderer, titleTexture, NULL, &titleRect);
-    
-    // title.draw(globalPos);
+    title.draw();
+    pressToStart.draw();
+}
+
+// Stupid hack because you can't start an SDL thread with an
+// instance method. I refuse to use Win32 threads
+int StartScreen::flashPressStartText(void *data) {
+    StartScreen *thisScreen = static_cast<StartScreen*>(data);
+    thisScreen->togglePressStartVisibility();
+    return 0;
+}
+
+void StartScreen::togglePressStartVisibility() {
+    StartScreenRenderer *renderer_ = 
+        dynamic_cast<StartScreenRenderer*>(renderer);
+
+    while (isFlashing) {
+        renderer_->pressToStart.setIsVisible(
+            !renderer_->pressToStart.getIsVisible()
+        );
+        SDL_Delay(750);
+    }
 }
