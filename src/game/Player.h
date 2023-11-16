@@ -5,6 +5,7 @@
 class Player : public EngineObject {
     EventManager *eventMgr = nullptr;
     const float speed = 0.1;
+    const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
 
 public:

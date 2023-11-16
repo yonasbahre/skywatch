@@ -8,6 +8,12 @@ class LevelMap : public EngineObject {
 
 public:
     Vec2D screenTransform = baseScreenTransform;
+    const float roadWidth = 200;
+    std::vector<std::vector<float>> roadCoords = {
+        {0, 0, 0, 500},
+        {0, 500, 750, 500},
+        {750, 500, 750, 1500}
+    };
 
     LevelMap(EngineObject *parent);
 
@@ -20,6 +26,9 @@ public:
 class LevelMapRenderer : public Renderer {
     SDL_Color GRASS = {20, 60, 20};
     SDL_Color DIRT = {80, 80, 20};
+    LevelMap *lvlMap = nullptr;
+
+    void renderRoad(std::vector<float>& road);
 
 public:
     LevelMapRenderer(LevelMap *object);

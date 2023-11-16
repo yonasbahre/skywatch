@@ -11,17 +11,19 @@ Player::Player(EngineObject *parent) : EngineObject(parent) {
 void Player::start() {}
 
 void Player::update() {
+    float scaleFactor = eventMgr->keyStates[SDL_SCANCODE_LSHIFT] ? sprintScale : 1;
+
     if (eventMgr->keyStates[SDL_SCANCODE_W]) {
-        setWorldPos(worldPos + Vec2D(0, -speed));
+        setWorldPos(worldPos + Vec2D(0, sprintScale * -speed));
     }
     if (eventMgr->keyStates[SDL_SCANCODE_S]) {
-        setWorldPos(worldPos + Vec2D(0, speed));
+        setWorldPos(worldPos + Vec2D(0, sprintScale * speed));
     }
     if (eventMgr->keyStates[SDL_SCANCODE_A]) {
-        setWorldPos(worldPos + Vec2D(-speed, 0));
+        setWorldPos(worldPos + Vec2D(sprintScale * -speed, 0));
     }
     if (eventMgr->keyStates[SDL_SCANCODE_D]) {
-        setWorldPos(worldPos + Vec2D(speed, 0));
+        setWorldPos(worldPos + Vec2D(sprintScale * speed, 0));
     }
 }
 
