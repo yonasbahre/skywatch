@@ -13,17 +13,14 @@ void Player::start() {}
 void Player::update() {
     float scaleFactor = eventMgr->keyStates[SDL_SCANCODE_LSHIFT] ? sprintScale : 1;
 
-    if (eventMgr->keyStates[SDL_SCANCODE_W]) {
-        setWorldPos(worldPos + Vec2D(0, sprintScale * -speed));
-    }
-    if (eventMgr->keyStates[SDL_SCANCODE_S]) {
-        setWorldPos(worldPos + Vec2D(0, sprintScale * speed));
-    }
-    if (eventMgr->keyStates[SDL_SCANCODE_A]) {
-        setWorldPos(worldPos + Vec2D(sprintScale * -speed, 0));
-    }
-    if (eventMgr->keyStates[SDL_SCANCODE_D]) {
-        setWorldPos(worldPos + Vec2D(sprintScale * speed, 0));
+    if (eventMgr->keyStates[SDL_SCANCODE_W] || eventMgr->keyStates[SDL_SCANCODE_UP]) {
+        setWorldPos(worldPos + Vec2D(0, scaleFactor * speed));
+    } else if (eventMgr->keyStates[SDL_SCANCODE_S] || eventMgr->keyStates[SDL_SCANCODE_DOWN]) {
+        setWorldPos(worldPos + Vec2D(0, scaleFactor * -speed));
+    } else if (eventMgr->keyStates[SDL_SCANCODE_A] || eventMgr->keyStates[SDL_SCANCODE_LEFT]) {
+        setWorldPos(worldPos + Vec2D(scaleFactor * speed, 0));
+    } else if (eventMgr->keyStates[SDL_SCANCODE_D] || eventMgr->keyStates[SDL_SCANCODE_RIGHT]) {
+        setWorldPos(worldPos + Vec2D(scaleFactor * -speed, 0));
     }
 }
 

@@ -6,14 +6,27 @@ class LevelMap : public EngineObject {
     const Vec2D baseScreenTransform = 
         Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
+    int randInt(int min, int max);
+    void generateRoads();
+
+    const float MIN_TOTAL_DIST = 50000;
+    const float MAX_TOTAL_DIST = 90000;
+
+    const float MIN_SEGMENT_DIST = 800;
+    const float MAX_SEGMENT_DIST = 2000;
+
+    Vec2D startPoint = Vec2D(0, 0);
+    Vec2D endPoint = Vec2D(0, 0);
+
 public:
     Vec2D screenTransform = baseScreenTransform;
-    const float roadWidth = 200;
-    std::vector<std::vector<float>> roadCoords = {
-        {0, 0, 0, 500},
-        {0, 500, 750, 500},
-        {750, 500, 750, 1500}
-    };
+    const float ROAD_WIDTH = 600;
+    std::vector<std::vector<float>> roadCoords; 
+    // = {
+    //     {0, 0, 0, 500},
+    //     {0, 500, 750, 500},
+    //     {750, 500, 750, 1500}
+    // };
 
     LevelMap(EngineObject *parent);
 
