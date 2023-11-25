@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <SDL2/SDL.h>
 #include "Vec2D.h"
 
@@ -26,4 +27,5 @@ public:
     void setIsVisible(bool isVisible);
 
     Vec2D getDimensions();
+    std::vector<float> getCorners();
 };

@@ -1,8 +1,16 @@
 #include <iostream>
+#include <algorithm>
 #include "Constants.h"
 #include "Player.h"
 
-Player::Player(EngineObject *parent) : EngineObject(parent) {
+Player::Player(
+    EngineObject *parent,
+    std::function<int(Vec2D)> getRoadIndexOfPoint,
+    std::function<void(int)> updateRoadIndex
+) : EngineObject(parent) {
+    this->getRoadIndexOfPoint = getRoadIndexOfPoint;
+    this->updateRoadIndex = updateRoadIndex;
+    
     renderer = new PlayerRenderer(this);
     renderer->pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     eventMgr = EventManager::getManager();
@@ -25,7 +33,25 @@ void Player::update() {
 }
 
 void Player::setWorldPos(Vec2D worldPos) {
-    this->worldPos = worldPos;
+    PlayerRenderer *renderer_ = dynamic_cast<PlayerRenderer*>(renderer);
+    std::vector<float> corners = renderer_->sprite.getCorners();
+    corners[0] -= worldPos.x + SCREEN_WIDTH / 2;
+    corners[1] -= worldPos.y + SCREEN_HEIGHT / 2;
+    corners[2] -= worldPos.x + SCREEN_WIDTH / 2;
+    corners[3] -= worldPos.y + SCREEN_HEIGHT / 2;
+    
+    std::vector<int> cornerIndices = {
+        getRoadIndexOfPoint({corners[0], corners[1]}),
+        getRoadIndexOfPoint({corners[0], corners[3]}),
+        getRoadIndexOfPoint({corners[2], corners[1]}),
+        getRoadIndexOfPoint({corners[2], corners[3]})
+    };
+    
+    int minIndex = *std::min_element(cornerIndices.begin(), cornerIndices.end());
+    if (minIndex != -1) {
+        updateRoadIndex(minIndex);
+        this->worldPos= worldPos;
+    }
 }
 
 Vec2D Player::getWorldPos() {

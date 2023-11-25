@@ -72,3 +72,12 @@ void Sprite::setIsVisible(bool isVisible) {
 Vec2D Sprite::getDimensions() {
     return Vec2D(sdlRect.w, sdlRect.h);
 }
+
+std::vector<float> Sprite::getCorners() {
+    return {
+        float (sdlRect.x),
+        float (sdlRect.y),
+        float (sdlRect.x + sdlRect.w),
+        float (sdlRect.y + sdlRect.h)
+    };
+}

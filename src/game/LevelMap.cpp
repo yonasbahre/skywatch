@@ -50,7 +50,33 @@ void LevelMap::generateRoads() {
         
         displacement = displacement * directions;
         currEnd = currStart + displacement;
-        roadCoords.push_back({currStart.x, currStart.y, currEnd.x, currEnd.y});
+
+        // New code for reformatting road storage
+        // TODO: Clean this up, no need to recalculate xDiff and yDiff
+        // Everything inside this while loop could be cleaned up honestly
+        std::vector<float> currRoad(4);
+        float xDiff = currEnd.x - currStart.x;
+        float yDiff = currEnd.y - currStart.y;
+        const float HALF_ROAD_WIDTH = ROAD_WIDTH / 2;
+
+        if (xDiff >= 0) {
+            currRoad[0] = currStart.x - HALF_ROAD_WIDTH;
+            currRoad[2] = xDiff + ROAD_WIDTH;
+        } else {
+            currRoad[0] = currEnd.x - HALF_ROAD_WIDTH;
+            currRoad[2] = (-1 * xDiff) + ROAD_WIDTH;
+        }
+
+        if (yDiff >= 0) {
+            currRoad[1] = currStart.y - HALF_ROAD_WIDTH;
+            currRoad[3] = yDiff + ROAD_WIDTH;
+        } else {
+            currRoad[1] = currEnd.y - HALF_ROAD_WIDTH;
+            currRoad[3] = (-1 * yDiff) + ROAD_WIDTH;
+        }
+
+        roadCoords.push_back(currRoad);
+        // roadCoords.push_back({currStart.x, currStart.y, currEnd.x, currEnd.y});
         
         horizontal = !horizontal;
         currStart = currEnd;
@@ -74,29 +100,9 @@ void LevelMapRenderer::render() {
 
 void LevelMapRenderer::renderRoad(std::vector<float>& road) {
     setSDLDrawColor(sdlRenderer, DIRT);
-    float fullWidth = lvlMap->ROAD_WIDTH;
-    float halfWidth = fullWidth / 2;
-
-    SDL_Rect roadRect;
-    float xDiff = road[2] - road[0];
-    float yDiff = road[3] - road[1];
-
-    if (xDiff >= 0) {
-        roadRect.x = road[0] - halfWidth;
-        roadRect.w = xDiff + fullWidth;
-    } else {
-        roadRect.x = road[2] - halfWidth;
-        roadRect.w = (-1 * xDiff) + fullWidth;
-    }
-
-    if (yDiff >= 0) {
-        roadRect.y = road[1] - halfWidth;
-        roadRect.h = yDiff + fullWidth;
-    } else {
-        roadRect.y = road[3] - halfWidth;
-        roadRect.h = (-1 * yDiff) + fullWidth;
-    }
-
+    SDL_Rect roadRect = 
+        {(int) road[0], (int) road[1], (int) road[2], (int) road[3]};
+    
     roadRect.x += lvlMap->screenTransform.x;
     roadRect.y += lvlMap->screenTransform.y;
 
