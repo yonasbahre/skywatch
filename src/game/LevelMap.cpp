@@ -4,7 +4,8 @@
 #include "LevelMap.h"
 #include "SDLUtils.h"
 
-LevelMap::LevelMap(EngineObject *parent) : EngineObject(parent) {
+LevelMap::LevelMap(EngineObject *parent, Vec2D const &screenTransform_) 
+    : EngineObject(parent), screenTransform(screenTransform_) {
     renderer = new LevelMapRenderer(this);
     generateRoads();
 }
@@ -12,10 +13,6 @@ LevelMap::LevelMap(EngineObject *parent) : EngineObject(parent) {
 void LevelMap::start() {}
 
 void LevelMap::update() {}
-
-void LevelMap::updateScreenTransform(Vec2D playerWorldPos) {
-    screenTransform = playerWorldPos + baseScreenTransform;
-}
 
 int LevelMap::randInt(int min, int max) {
     static std::mt19937 eng(time(nullptr));
@@ -75,9 +72,7 @@ void LevelMap::generateRoads() {
             currRoad[3] = (-1 * yDiff) + ROAD_WIDTH;
         }
 
-        roadCoords.push_back(currRoad);
-        // roadCoords.push_back({currStart.x, currStart.y, currEnd.x, currEnd.y});
-        
+        roadCoords.push_back(currRoad);        
         horizontal = !horizontal;
         currStart = currEnd;
     }

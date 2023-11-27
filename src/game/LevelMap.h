@@ -3,8 +3,8 @@
 #include "Constants.h"
 
 class LevelMap : public EngineObject {
-    const Vec2D baseScreenTransform = 
-        Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    // const Vec2D baseScreenTransform = 
+    //     Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
     int randInt(int min, int max);
     void generateRoads();
@@ -19,7 +19,10 @@ class LevelMap : public EngineObject {
     Vec2D endPoint = Vec2D(0, 0);
 
 public:
-    Vec2D screenTransform = baseScreenTransform;
+    LevelMap(EngineObject *parent, Vec2D const &screenTransform);
+    
+    // Vec2D screenTransform = baseScreenTransform;
+    Vec2D const &screenTransform;
     const float ROAD_WIDTH = 600;
     std::vector<std::vector<float>> roadCoords; 
     // = {
@@ -28,12 +31,8 @@ public:
     //     {750, 500, 750, 1500}
     // };
 
-    LevelMap(EngineObject *parent);
-
     void start();
     void update();
-
-    void updateScreenTransform(Vec2D playerWorldPos);
 };
 
 class LevelMapRenderer : public Renderer {

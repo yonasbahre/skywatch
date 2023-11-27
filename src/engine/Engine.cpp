@@ -25,6 +25,7 @@ Engine::Engine() {
     );
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     eventMgr = EventManager::getManager();
+    collisionMgr = CollisionManager::getGlobalManager();
 }
 
 Engine::~Engine() {
@@ -35,6 +36,7 @@ Engine::~Engine() {
         delete obj;
     }
     delete currLevel;
+    delete collisionMgr;
     delete eventMgr;
 
     IMG_Quit();
@@ -119,6 +121,8 @@ inline void Engine::update() {
             stack.push_back(child);
         }
     }
+
+    collisionMgr->update();
 }
 
 inline void Engine::render() {

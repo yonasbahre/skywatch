@@ -5,15 +5,26 @@
 
 Player::Player(
     EngineObject *parent,
-    std::function<int(Vec2D)> getRoadIndexOfPoint,
-    std::function<void(int)> updateRoadIndex
+    std::function<int(Vec2D)> getRoadSegmentOfPoint,
+    std::function<void(int)> updateCurrRoadSegment
 ) : EngineObject(parent) {
-    this->getRoadIndexOfPoint = getRoadIndexOfPoint;
-    this->updateRoadIndex = updateRoadIndex;
+    this->getRoadSegmentOfPoint = getRoadSegmentOfPoint;
+    this->updateCurrRoadSegment = updateCurrRoadSegment;
     
-    renderer = new PlayerRenderer(this);
+    PlayerRenderer *playerRenderer = new PlayerRenderer(this);
+    renderer = playerRenderer;
     renderer->pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    collider = new Collider(playerRenderer->sprite);
+
+    collider->onCollisionStart = [](Collision col) {
+        std::cout << "Starting collision!\n";
+    };
+
     eventMgr = EventManager::getManager();
+}
+
+Player::~Player() {
+    delete collider;
 }
 
 void Player::start() {}
@@ -41,15 +52,15 @@ void Player::setWorldPos(Vec2D worldPos) {
     corners[3] -= worldPos.y + SCREEN_HEIGHT / 2;
     
     std::vector<int> cornerIndices = {
-        getRoadIndexOfPoint({corners[0], corners[1]}),
-        getRoadIndexOfPoint({corners[0], corners[3]}),
-        getRoadIndexOfPoint({corners[2], corners[1]}),
-        getRoadIndexOfPoint({corners[2], corners[3]})
+        getRoadSegmentOfPoint({corners[0], corners[1]}),
+        getRoadSegmentOfPoint({corners[0], corners[3]}),
+        getRoadSegmentOfPoint({corners[2], corners[1]}),
+        getRoadSegmentOfPoint({corners[2], corners[3]})
     };
     
     int minIndex = *std::min_element(cornerIndices.begin(), cornerIndices.end());
     if (minIndex != -1) {
-        updateRoadIndex(minIndex);
+        updateCurrRoadSegment(minIndex);
         this->worldPos= worldPos;
     }
 }

@@ -2,22 +2,27 @@
 #include "EngineObject.h"
 #include "Sprite.h"
 #include "EventManager.h"
+#include "Collider.h"
 
 class Player : public EngineObject {
     EventManager *eventMgr = nullptr;
+    Collider *collider = nullptr;
+
     const float speed = 0.2;
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
 
-    std::function<int(Vec2D)> getRoadIndexOfPoint;
-    std::function<void(int)> updateRoadIndex;
+    std::function<int(Vec2D)> getRoadSegmentOfPoint;
+    std::function<void(int)> updateCurrRoadSegment;
 
 public:
     Player(
         EngineObject *parent,
-        std::function<int(Vec2D)> getRoadIndexOfPoint,
-        std::function<void(int)> updateRoadIndex
+        std::function<int(Vec2D)> getRoadSegmentOfPoint,
+        std::function<void(int)> updateCurrRoadSegment
     );
+
+    ~Player();
 
     void start();
     void update();

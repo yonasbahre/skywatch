@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include "EngineObject.h"
 #include "EventManager.h"
+#include "CollisionManager.h"
 
 class Engine {
     static Engine *engineSingleton;
@@ -17,6 +18,7 @@ class Engine {
     EngineObject *currLevel = nullptr;
     std::vector<EngineObject*> globalObjects;
     EventManager *eventMgr = nullptr;
+    CollisionManager *collisionMgr = nullptr;
 
     void start();
     void update();

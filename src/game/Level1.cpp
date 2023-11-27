@@ -1,25 +1,45 @@
 #include <iostream>
 #include "Level1.h"
 
-Level1::Level1() {}
+Level1::Level1() {
+    segments = 
+        std::vector<std::vector<EngineObject*>>(map.roadCoords.size());
+}
 
 Level1::~Level1() {}
 
 void Level1::start() {
     player.registerAndStart();
+    sampleEnemy.registerAndStart();
     map.registerAndStart();
 }
 
 void Level1::update() {
-    map.updateScreenTransform(player.getWorldPos());
+    screenTransform = player.getWorldPos() + baseScreenTransform;
 }
 
-std::function<int(Vec2D)> Level1::getRoadIndexOfPoint() {
+void Level1::loadSegment(int index) {
+    if (index < 0 || index >= segments.size()) {
+        return;
+    }
+}
+
+void Level1::unloadSegment(int index) {
+    if (index < 0 || index >= segments.size()) {
+        return;
+    }
+    for (EngineObject *entity : segments[index]) {
+        delete entity;
+    }
+    segments[index].clear();
+}
+
+std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {
     return [this](Vec2D point) {
-        float x1 = map.roadCoords[roadIndex][0];
-        float x2 = x1 + map.roadCoords[roadIndex][2];
-        float y1 = map.roadCoords[roadIndex][1];
-        float y2 = y1 + map.roadCoords[roadIndex][3];
+        float x1 = map.roadCoords[currSegment][0];
+        float x2 = x1 + map.roadCoords[currSegment][2];
+        float y1 = map.roadCoords[currSegment][1];
+        float y2 = y1 + map.roadCoords[currSegment][3];
         
         if (
             point.x >= x1 &&
@@ -27,14 +47,14 @@ std::function<int(Vec2D)> Level1::getRoadIndexOfPoint() {
             point.y >= y1 &&
             point.y <= y2
         ) {
-            return roadIndex;
+            return currSegment;
         }
 
-        if (roadIndex + 1 < map.roadCoords.size()) {
-            x1 = map.roadCoords[roadIndex + 1][0];
-            x2 = x1 + map.roadCoords[roadIndex + 1][2];
-            y1 = map.roadCoords[roadIndex + 1][1];
-            y2 = y1 + map.roadCoords[roadIndex + 1][3];
+        if (currSegment + 1 < map.roadCoords.size()) {
+            x1 = map.roadCoords[currSegment + 1][0];
+            x2 = x1 + map.roadCoords[currSegment + 1][2];
+            y1 = map.roadCoords[currSegment + 1][1];
+            y2 = y1 + map.roadCoords[currSegment + 1][3];
 
             if (
                 point.x >= x1 &&
@@ -42,15 +62,15 @@ std::function<int(Vec2D)> Level1::getRoadIndexOfPoint() {
                 point.y >= y1 &&
                 point.y <= y2
             ) {
-                return roadIndex + 1;
+                return currSegment + 1;
             }
         }
 
-        if (roadIndex - 1 >= 0) {
-            x1 = map.roadCoords[roadIndex - 1][0];
-            x2 = x1 + map.roadCoords[roadIndex - 1][2];
-            y1 = map.roadCoords[roadIndex - 1][1];
-            y2 = y1 + map.roadCoords[roadIndex - 1][3];
+        if (currSegment - 1 >= 0) {
+            x1 = map.roadCoords[currSegment - 1][0];
+            x2 = x1 + map.roadCoords[currSegment - 1][2];
+            y1 = map.roadCoords[currSegment - 1][1];
+            y2 = y1 + map.roadCoords[currSegment - 1][3];
 
             if (
                 point.x >= x1 &&
@@ -58,7 +78,7 @@ std::function<int(Vec2D)> Level1::getRoadIndexOfPoint() {
                 point.y >= y1 &&
                 point.y <= y2
             ) {
-                return roadIndex - 1;
+                return currSegment - 1;
             }
         }
 
@@ -66,8 +86,20 @@ std::function<int(Vec2D)> Level1::getRoadIndexOfPoint() {
     };
 }
 
-std::function<void(int)> Level1::updateRoadIndex() {
+std::function<void(int)> Level1::updateCurrRoadSegment() {
     return [this](int index) {
-        roadIndex = index;
+        if (currSegment == index) {
+            return;
+        }
+        int prevSegment = currSegment;
+        currSegment = index;
+
+        if (prevSegment < currSegment) {
+            loadSegment(currSegment + RIGHT_WINDOW_SIZE);
+            unloadSegment(currSegment - LEFT_WINDOW_SIZE - 1);
+        } else {
+            loadSegment(currSegment - LEFT_WINDOW_SIZE);
+            unloadSegment(currSegment + RIGHT_WINDOW_SIZE + 1);
+        }
     };
 }

@@ -2,18 +2,32 @@
 #include "EngineObject.h"
 #include "Player.h"
 #include "LevelMap.h"
+#include "Enemy.h"
 
 class Level1 : public EngineObject {
+    const Vec2D baseScreenTransform = 
+        Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    Vec2D screenTransform = baseScreenTransform;
+
     Player player = Player(
         this,
-        getRoadIndexOfPoint(),
-        updateRoadIndex()
+        getRoadSegmentOfPoint(),
+        updateCurrRoadSegment()
     );
-    LevelMap map = LevelMap(this);
-    int roadIndex = 0;
+    LevelMap map = LevelMap(this, screenTransform);
+    
+    std::vector<std::vector<EngineObject*>> segments;
+    int currSegment = 0;
+    const int LEFT_WINDOW_SIZE = 2;
+    const int RIGHT_WINDOW_SIZE = 2;
 
-    std::function<int(Vec2D)> getRoadIndexOfPoint();
-    std::function<void(int)> updateRoadIndex();
+    void loadSegment(int index);
+    void unloadSegment(int index);
+
+    std::function<int(Vec2D)> getRoadSegmentOfPoint();
+    std::function<void(int)> updateCurrRoadSegment();
+
+    Enemy sampleEnemy = Enemy(this, screenTransform);
 
 public:
     Level1();
