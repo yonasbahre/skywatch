@@ -2,9 +2,7 @@
 #include <SDL2/SDL.h>
 
 class EventManager {
-    static EventManager *managerSingleton;
     EventManager();
-
     int keyStatesLength = 0;
 
 public:

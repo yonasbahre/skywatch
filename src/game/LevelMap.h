@@ -20,7 +20,8 @@ class LevelMap : public EngineObject {
 
 public:
     LevelMap(EngineObject *parent, Vec2D const &screenTransform);
-    
+    ~LevelMap();
+
     // Vec2D screenTransform = baseScreenTransform;
     Vec2D const &screenTransform;
     const float ROAD_WIDTH = 600;

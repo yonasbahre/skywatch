@@ -8,8 +8,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-Engine *Engine::engineSingleton = nullptr;
-
 Engine::Engine() {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
@@ -42,14 +40,11 @@ Engine::~Engine() {
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
-    delete engineSingleton;
 }
 
 Engine *Engine::getEngine() {
-    if (!engineSingleton) {
-        engineSingleton = new Engine();
-    }
-    return engineSingleton;
+    static Engine engine;
+    return &engine;
 }
 
 void Engine::registerGlobalObject(EngineObject *obj) {
@@ -71,17 +66,9 @@ void Engine::registerLevel(
 }
 
 void Engine::loadLevel(const std::string& levelId) {
-    std::function<EngineObject*()> lvlConstructor = levelRegistry[levelId];
-
-    EngineObject *oldLevel = currLevel;
-    EngineObject *newLevel = lvlConstructor();
-
-    // NOTE: Must put mutex around these two lines if we ever
-    // make this engine multithreaded
-    currLevel = newLevel;
-    currLevel->start();
-
-    delete oldLevel;
+    // Level won't actually be loaded until
+    // start of next frame
+    queuedLevel = levelId;
 }
 
 void Engine::setStartLevel(const std::string& levelId) {
@@ -94,6 +81,15 @@ inline void Engine::start() {
 }
 
 inline void Engine::update() {
+    if (queuedLevel) {
+        std::function<EngineObject*()> lvlConstructor = levelRegistry[queuedLevel.value()];
+        EngineObject *oldLevel = currLevel;
+        currLevel = lvlConstructor();
+        delete oldLevel;
+        currLevel->start();
+        queuedLevel = std::nullopt;
+    }
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {

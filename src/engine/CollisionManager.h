@@ -4,7 +4,6 @@
 class Collider;
 
 class CollisionManager {
-    static CollisionManager *managerSingleton;
     std::vector<Collider*> colliders;
     
     CollisionManager();

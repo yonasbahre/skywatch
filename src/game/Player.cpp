@@ -1,7 +1,10 @@
 #include <iostream>
 #include <algorithm>
 #include "Constants.h"
+#include "Engine.h"
+#include "LevelDirectory.h"
 #include "Player.h"
+#include "Enemy.h"
 
 Player::Player(
     EngineObject *parent,
@@ -15,9 +18,14 @@ Player::Player(
     renderer = playerRenderer;
     renderer->pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     collider = new Collider(playerRenderer->sprite);
+    collider->tag = "PLAYER";
 
-    collider->onCollisionStart = [](Collision col) {
+    collider->onCollisionStart = [this](Collision col) {
         std::cout << "Starting collision!\n";
+
+        if (col.other->tag == "ENEMY") {
+            decreaseHealth(Enemy::DAMAGE_DEALT);
+        }
     };
 
     eventMgr = EventManager::getManager();
@@ -67,6 +75,18 @@ void Player::setWorldPos(Vec2D worldPos) {
 
 Vec2D Player::getWorldPos() {
     return worldPos;
+}
+
+void Player::decreaseHealth(float amount) {
+    float prevHealth = health;
+    health -= amount;
+    std::cout <<
+        "Prev Health: " << prevHealth << ", " <<
+        "New Health: "  << health << std::endl;
+
+    if (health <= 0) {
+        Engine::getEngine()->loadLevel(LEVEL_1);
+    }
 }
 
 PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {

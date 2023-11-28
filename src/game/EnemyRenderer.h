@@ -10,5 +10,6 @@ public:
     Sprite sprite = Sprite(this->sdlRenderer, "assets/megaman.png");
 
     EnemyRenderer(Enemy *enemy);
+    ~EnemyRenderer();
     void render();
 };

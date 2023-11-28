@@ -6,7 +6,15 @@ Level1::Level1() {
         std::vector<std::vector<EngineObject*>>(map.roadCoords.size());
 }
 
-Level1::~Level1() {}
+Level1::~Level1() {
+    for (std::vector<EngineObject*>& segment : segments) {
+        for (EngineObject *entity : segment) {
+            delete entity;
+        }
+        segment.clear();
+    }
+    segments.clear();
+}
 
 void Level1::start() {
     player.registerAndStart();

@@ -10,6 +10,8 @@ class Enemy : public EngineObject {
     Collider *collider = nullptr;
 
 public:
+    static const float DAMAGE_DEALT;
+
     Enemy(
         EngineObject *parent,
         Vec2D const &screenTransform_

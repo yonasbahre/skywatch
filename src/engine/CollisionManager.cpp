@@ -2,26 +2,20 @@
 #include "CollisionManager.h"
 #include <algorithm>
 
-CollisionManager *CollisionManager::managerSingleton = nullptr;
+#include <iostream>
 
 CollisionManager::CollisionManager() {}
 
-CollisionManager::~CollisionManager() {
-    if (managerSingleton) {
-        delete managerSingleton;
-    }
-}
+CollisionManager::~CollisionManager() {}
 
 CollisionManager *CollisionManager::getGlobalManager() {
-    if (managerSingleton) {
-        return managerSingleton;
-    }
-    managerSingleton = new CollisionManager();
-    return managerSingleton;
+    static CollisionManager globalManager;
+    return &globalManager;
 }
 
 void CollisionManager::registerCollider(Collider &collider) {
     colliders.push_back(&collider);
+    std::cout << "Add - Collider Count: " << colliders.size() << std::endl;
 }
 
 void CollisionManager::deregisterCollider(Collider &collider) {
@@ -29,6 +23,7 @@ void CollisionManager::deregisterCollider(Collider &collider) {
     if (iter != colliders.end()) {
         colliders.erase(iter);
     }
+    std::cout << "Del - Collider Count: " << colliders.size() << std::endl;
 }
 
 void CollisionManager::update() {

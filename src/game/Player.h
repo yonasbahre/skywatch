@@ -12,6 +12,9 @@ class Player : public EngineObject {
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
 
+    const float maxHealth = 100;
+    float health = maxHealth;
+
     std::function<int(Vec2D)> getRoadSegmentOfPoint;
     std::function<void(int)> updateCurrRoadSegment;
 
@@ -29,6 +32,8 @@ public:
 
     void setWorldPos(Vec2D worldPos);
     Vec2D getWorldPos();
+
+    void decreaseHealth(float amount);
 };
 
 class PlayerRenderer : public Renderer {

@@ -10,6 +10,8 @@ LevelMap::LevelMap(EngineObject *parent, Vec2D const &screenTransform_)
     generateRoads();
 }
 
+LevelMap::~LevelMap() {}
+
 void LevelMap::start() {}
 
 void LevelMap::update() {}

@@ -2,13 +2,13 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <optional>
 #include <SDL2/SDL.h>
 #include "EngineObject.h"
 #include "EventManager.h"
 #include "CollisionManager.h"
 
 class Engine {
-    static Engine *engineSingleton;
     Engine();
 
     std::unordered_map<std::string, std::function<EngineObject*()>> levelRegistry;
@@ -16,6 +16,8 @@ class Engine {
 
     bool quit = false;
     EngineObject *currLevel = nullptr;
+    std::optional<std::string> queuedLevel;
+
     std::vector<EngineObject*> globalObjects;
     EventManager *eventMgr = nullptr;
     CollisionManager *collisionMgr = nullptr;
