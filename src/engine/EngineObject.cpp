@@ -16,7 +16,6 @@ EngineObject::~EngineObject() {
     for (EngineObject *child : children) {
         delete child;
     }
-    delete renderer;
 
     if (parent) {
         parent->deregisterChild(this);
@@ -43,4 +42,8 @@ void EngineObject::deregisterChild(EngineObject *child) {
     if (iter != children.end()) {
         children.erase(iter);
     }
+}
+
+Renderer *EngineObject::getRenderer() {
+    return nullptr;
 }

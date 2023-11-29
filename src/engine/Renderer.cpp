@@ -10,8 +10,8 @@ Renderer::~Renderer() {}
 
 void Renderer::updateGlobalPosAndRender() {
     Vec2D parentPos = {0, 0};
-    if (object->parent && object->parent->renderer) {
-        parentPos = object->parent->renderer->globalPos;
+    if (object->parent && object->parent->getRenderer()) {
+        parentPos = object->parent->getRenderer()->globalPos;
     }
 
     globalPos = pos + parentPos;

@@ -22,6 +22,8 @@ class StartScreen : public EngineObject {
         void render();
     };
 
+    StartScreenRenderer renderer = StartScreenRenderer(this);
+
     EventManager *eventMgr = nullptr;
     SDL_Thread *flasherThread = nullptr;
     bool isFlashing = true;
@@ -35,6 +37,7 @@ public:
     StartScreen();
     ~StartScreen();
 
+    Renderer *getRenderer() override;
     void start();
     void update();
 };

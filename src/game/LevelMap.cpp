@@ -6,11 +6,14 @@
 
 LevelMap::LevelMap(EngineObject *parent, Vec2D const &screenTransform_) 
     : EngineObject(parent), screenTransform(screenTransform_) {
-    renderer = new LevelMapRenderer(this);
     generateRoads();
 }
 
 LevelMap::~LevelMap() {}
+
+Renderer *LevelMap::getRenderer() {
+    return &renderer;
+}
 
 void LevelMap::start() {}
 
@@ -81,11 +84,11 @@ void LevelMap::generateRoads() {
     endPoint = currEnd;
 }
 
-LevelMapRenderer::LevelMapRenderer(LevelMap *object) : Renderer(object) {
+LevelMap::LevelMapRenderer::LevelMapRenderer(LevelMap *object) : Renderer(object) {
     lvlMap = object;
 }
 
-void LevelMapRenderer::render() {
+void LevelMap::LevelMapRenderer::render() {
     setSDLDrawColor(sdlRenderer, GRASS);
     SDL_Rect screenRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     SDL_RenderFillRect(sdlRenderer, &screenRect);
@@ -95,7 +98,7 @@ void LevelMapRenderer::render() {
     }
 }
 
-void LevelMapRenderer::renderRoad(std::vector<float>& road) {
+void LevelMap::LevelMapRenderer::renderRoad(std::vector<float>& road) {
     setSDLDrawColor(sdlRenderer, DIRT);
     SDL_Rect roadRect = 
         {(int) road[0], (int) road[1], (int) road[2], (int) road[3]};

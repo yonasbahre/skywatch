@@ -14,10 +14,8 @@ Player::Player(
     this->getRoadSegmentOfPoint = getRoadSegmentOfPoint;
     this->updateCurrRoadSegment = updateCurrRoadSegment;
     
-    PlayerRenderer *playerRenderer = new PlayerRenderer(this);
-    renderer = playerRenderer;
-    renderer->pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    collider = new Collider(playerRenderer->sprite);
+    renderer.pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    collider = new Collider(renderer.sprite);
     collider->tag = "PLAYER";
 
     collider->onCollisionStart = [this](Collision col) {
@@ -31,6 +29,10 @@ Player::Player(
 
 Player::~Player() {
     delete collider;
+}
+
+Renderer *Player::getRenderer() {
+    return &renderer;
 }
 
 void Player::start() {}
@@ -50,8 +52,7 @@ void Player::update() {
 }
 
 void Player::setWorldPos(Vec2D worldPos) {
-    PlayerRenderer *renderer_ = dynamic_cast<PlayerRenderer*>(renderer);
-    std::vector<float> corners = renderer_->sprite.getCorners();
+    std::vector<float> corners = renderer.sprite.getCorners();
     corners[0] -= worldPos.x + SCREEN_WIDTH / 2;
     corners[1] -= worldPos.y + SCREEN_HEIGHT / 2;
     corners[2] -= worldPos.x + SCREEN_WIDTH / 2;
@@ -84,13 +85,13 @@ void Player::decreaseHealth(float amount) {
     }
 }
 
-PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {
+Player::PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {
     sprite.setIsCentered(true);
     sprite.scaleDimensions(0.25);
 }
 
-PlayerRenderer::~PlayerRenderer() {}
+Player::PlayerRenderer::~PlayerRenderer() {}
 
-void PlayerRenderer::render() {
+void Player::PlayerRenderer::render() {
     sprite.draw(globalPos);
 }

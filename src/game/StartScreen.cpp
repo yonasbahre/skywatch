@@ -9,11 +9,14 @@
 
 StartScreen::StartScreen() {
     eventMgr = EventManager::getManager();
-    renderer = new StartScreenRenderer(this);
 }
 
 StartScreen::~StartScreen() {
     SDL_WaitThread(flasherThread, nullptr);
+}
+
+Renderer *StartScreen::getRenderer() {
+    return &renderer;
 }
 
 void StartScreen::start() {
@@ -65,12 +68,9 @@ int StartScreen::flashPressStartText(void *data) {
 }
 
 void StartScreen::togglePressStartVisibility() {
-    StartScreenRenderer *renderer_ = 
-        dynamic_cast<StartScreenRenderer*>(renderer);
-
     while (isFlashing) {
-        renderer_->pressToStart.setIsVisible(
-            !renderer_->pressToStart.getIsVisible()
+        renderer.pressToStart.setIsVisible(
+            !renderer.pressToStart.getIsVisible()
         );
         SDL_Delay(750);
     }

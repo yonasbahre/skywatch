@@ -133,8 +133,8 @@ inline void Engine::render() {
         EngineObject *curr = stack.back();
         stack.pop_back();
 
-        if (curr->renderer) {
-            curr->renderer->updateGlobalPosAndRender();
+        if (curr->getRenderer()) {
+            curr->getRenderer()->updateGlobalPosAndRender();
         }
         for (EngineObject *child : curr->children) {
             stack.push_back(child);

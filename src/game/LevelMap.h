@@ -3,9 +3,19 @@
 #include "Constants.h"
 
 class LevelMap : public EngineObject {
-    // const Vec2D baseScreenTransform = 
-    //     Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    class LevelMapRenderer : public Renderer {
+        SDL_Color GRASS = {20, 60, 20};
+        SDL_Color DIRT = {80, 80, 20};
+        LevelMap *lvlMap = nullptr;
 
+        void renderRoad(std::vector<float>& road);
+
+    public:
+        LevelMapRenderer(LevelMap *object);
+        void render();
+    };
+    
+    LevelMapRenderer renderer = LevelMapRenderer(this);
     int randInt(int min, int max);
     void generateRoads();
 
@@ -22,7 +32,6 @@ public:
     LevelMap(EngineObject *parent, Vec2D const &screenTransform);
     ~LevelMap();
 
-    // Vec2D screenTransform = baseScreenTransform;
     Vec2D const &screenTransform;
     const float ROAD_WIDTH = 600;
     std::vector<std::vector<float>> roadCoords; 
@@ -32,18 +41,7 @@ public:
     //     {750, 500, 750, 1500}
     // };
 
+    Renderer *getRenderer() override;
     void start();
     void update();
-};
-
-class LevelMapRenderer : public Renderer {
-    SDL_Color GRASS = {20, 60, 20};
-    SDL_Color DIRT = {80, 80, 20};
-    LevelMap *lvlMap = nullptr;
-
-    void renderRoad(std::vector<float>& road);
-
-public:
-    LevelMapRenderer(LevelMap *object);
-    void render();
 };

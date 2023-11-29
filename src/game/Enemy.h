@@ -6,7 +6,7 @@
 #include "Collider.h"
 
 class Enemy : public EngineObject {
-    EnemyRenderer *enemyRenderer = nullptr;
+    EnemyRenderer renderer = EnemyRenderer(this);
     Collider *collider = nullptr;
 
 public:
@@ -20,6 +20,7 @@ public:
 
     Vec2D const &screenTransform;
 
+    Renderer *getRenderer() override;
     void start();
     void update();
 };

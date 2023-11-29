@@ -5,8 +5,19 @@
 #include "Collider.h"
 
 class Player : public EngineObject {
+    class PlayerRenderer : public Renderer {
+    public:
+        PlayerRenderer(Player *object);
+        ~PlayerRenderer();
+        Sprite sprite = Sprite(this->sdlRenderer, "assets/megaman.png");
+
+        void render();
+    };
+    
+    
     EventManager *eventMgr = nullptr;
     Collider *collider = nullptr;
+    PlayerRenderer renderer = PlayerRenderer(this);
 
     const float speed = 0.2;
     const float sprintScale = 3;
@@ -27,6 +38,7 @@ public:
 
     ~Player();
 
+    Renderer *getRenderer() override;
     void start();
     void update();
 
@@ -34,13 +46,4 @@ public:
     Vec2D getWorldPos();
 
     void decreaseHealth(float amount);
-};
-
-class PlayerRenderer : public Renderer {
-public:
-    PlayerRenderer(Player *object);
-    ~PlayerRenderer();
-    Sprite sprite = Sprite(this->sdlRenderer, "assets/megaman.png");
-
-    void render();
 };
