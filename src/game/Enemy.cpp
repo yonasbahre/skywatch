@@ -7,13 +7,10 @@ Enemy::Enemy(
     EngineObject *parent,
     Vec2D const &screenTransform_
 ) : EngineObject(parent), screenTransform(screenTransform_) {
-    collider = new Collider(renderer.sprite);
-    collider->tag = "ENEMY";
+    collider.tag = "ENEMY";
 }
 
-Enemy::~Enemy() {
-    delete collider;
-}
+Enemy::~Enemy() {}
 
 Renderer *Enemy::getRenderer() {
     return &renderer;

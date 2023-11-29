@@ -7,7 +7,7 @@
 
 class Enemy : public EngineObject {
     EnemyRenderer renderer = EnemyRenderer(this);
-    Collider *collider = nullptr;
+    Collider collider = Collider(renderer.sprite);
 
 public:
     static const float DAMAGE_DEALT;

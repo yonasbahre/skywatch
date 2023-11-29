@@ -14,10 +14,9 @@ class Player : public EngineObject {
         void render();
     };
     
-    
     EventManager *eventMgr = nullptr;
-    Collider *collider = nullptr;
     PlayerRenderer renderer = PlayerRenderer(this);
+    Collider collider = Collider(renderer.sprite);
 
     const float speed = 0.2;
     const float sprintScale = 3;

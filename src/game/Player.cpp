@@ -15,10 +15,9 @@ Player::Player(
     this->updateCurrRoadSegment = updateCurrRoadSegment;
     
     renderer.pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    collider = new Collider(renderer.sprite);
-    collider->tag = "PLAYER";
+    collider.tag = "PLAYER";
 
-    collider->onCollisionStart = [this](Collision col) {
+    collider.onCollisionStart = [this](Collision col) {
         if (col.other->tag == "ENEMY") {
             decreaseHealth(Enemy::DAMAGE_DEALT);
         }
@@ -27,9 +26,7 @@ Player::Player(
     eventMgr = EventManager::getManager();
 }
 
-Player::~Player() {
-    delete collider;
-}
+Player::~Player() {}
 
 Renderer *Player::getRenderer() {
     return &renderer;
