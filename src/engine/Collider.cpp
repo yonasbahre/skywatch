@@ -2,8 +2,6 @@
 #include "CollisionManager.h"
 #include "Collider.h"
 
-#include <iostream>
-
 Collider::Collider(Sprite &sprite) {
     this->sprite = &sprite;
     manager = CollisionManager::getGlobalManager();
@@ -58,7 +56,6 @@ void Collider::updateCollisionState(Collider &other) {
     if (!colliding && thisCollision != collisions.end()) {
         thisCollision->other->removeCollisionWith(*this);
         collisions.erase(thisCollision);
-        std::cout << "Collision ended and removed!\n";
     } 
     else if (colliding && thisCollision == collisions.end()) {
         collisions.push_back({&other});
@@ -66,7 +63,6 @@ void Collider::updateCollisionState(Collider &other) {
         
         onCollisionStart(collisions.back());
         other.onCollisionStart(other.collisions.back());
-        std::cout << "Collision processed!\n";
     }
 }
 

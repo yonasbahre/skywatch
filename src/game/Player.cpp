@@ -21,8 +21,6 @@ Player::Player(
     collider->tag = "PLAYER";
 
     collider->onCollisionStart = [this](Collision col) {
-        std::cout << "Starting collision!\n";
-
         if (col.other->tag == "ENEMY") {
             decreaseHealth(Enemy::DAMAGE_DEALT);
         }
@@ -80,9 +78,6 @@ Vec2D Player::getWorldPos() {
 void Player::decreaseHealth(float amount) {
     float prevHealth = health;
     health -= amount;
-    std::cout <<
-        "Prev Health: " << prevHealth << ", " <<
-        "New Health: "  << health << std::endl;
 
     if (health <= 0) {
         Engine::getEngine()->loadLevel(LEVEL_1);
@@ -93,6 +88,8 @@ PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {
     sprite.setIsCentered(true);
     sprite.scaleDimensions(0.25);
 }
+
+PlayerRenderer::~PlayerRenderer() {}
 
 void PlayerRenderer::render() {
     sprite.draw(globalPos);

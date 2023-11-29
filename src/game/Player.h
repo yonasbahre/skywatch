@@ -39,6 +39,7 @@ public:
 class PlayerRenderer : public Renderer {
 public:
     PlayerRenderer(Player *object);
+    ~PlayerRenderer();
     Sprite sprite = Sprite(this->sdlRenderer, "assets/megaman.png");
 
     void render();

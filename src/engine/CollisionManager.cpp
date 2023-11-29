@@ -2,8 +2,6 @@
 #include "CollisionManager.h"
 #include <algorithm>
 
-#include <iostream>
-
 CollisionManager::CollisionManager() {}
 
 CollisionManager::~CollisionManager() {}
@@ -15,7 +13,6 @@ CollisionManager *CollisionManager::getGlobalManager() {
 
 void CollisionManager::registerCollider(Collider &collider) {
     colliders.push_back(&collider);
-    std::cout << "Add - Collider Count: " << colliders.size() << std::endl;
 }
 
 void CollisionManager::deregisterCollider(Collider &collider) {
@@ -23,7 +20,6 @@ void CollisionManager::deregisterCollider(Collider &collider) {
     if (iter != colliders.end()) {
         colliders.erase(iter);
     }
-    std::cout << "Del - Collider Count: " << colliders.size() << std::endl;
 }
 
 void CollisionManager::update() {

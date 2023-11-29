@@ -6,7 +6,7 @@ Renderer::Renderer(EngineObject *object) {
     this->sdlRenderer = Engine::getEngine()->renderer;
 }
 
-// Renderer::~Renderer() {}
+Renderer::~Renderer() {}
 
 void Renderer::updateGlobalPosAndRender() {
     Vec2D parentPos = {0, 0};

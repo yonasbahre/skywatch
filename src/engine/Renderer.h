@@ -10,7 +10,7 @@ protected:
     SDL_Renderer *sdlRenderer;
 public:
     Renderer(EngineObject *object);
-    // ~Renderer();
+    virtual ~Renderer();
 
     Vec2D pos = {0, 0};
     Vec2D globalPos = {0, 0};

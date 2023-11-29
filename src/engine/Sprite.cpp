@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <SDL2/SDL_image.h>
 #include "Sprite.h"
+#include <iostream>
 
 Sprite::Sprite(SDL_Renderer *sdlRenderer, std::string spritePath) {
     this->sdlRenderer = sdlRenderer;

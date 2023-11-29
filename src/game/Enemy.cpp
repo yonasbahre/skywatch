@@ -1,8 +1,6 @@
 #include "Enemy.h"
 #include "EnemyRenderer.h"
 
-#include <iostream>
-
 const float Enemy::DAMAGE_DEALT = 100;
 
 Enemy::Enemy(
@@ -17,7 +15,6 @@ Enemy::Enemy(
 
 Enemy::~Enemy() {
     delete collider;
-    delete enemyRenderer;
 }
 
 void Enemy::start() {}
