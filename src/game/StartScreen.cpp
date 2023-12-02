@@ -12,6 +12,7 @@ StartScreen::StartScreen() {
 }
 
 StartScreen::~StartScreen() {
+    isFlashing = false;
     SDL_WaitThread(flasherThread, nullptr);
 }
 

@@ -18,6 +18,7 @@ Level1::~Level1() {
 
 void Level1::start() {
     player.registerAndStart();
+    sampleCrow.registerAndStart();
     sampleEnemy.registerAndStart();
     map.registerAndStart();
 }

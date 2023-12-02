@@ -5,6 +5,7 @@
 #include "LevelDirectory.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "SDLUtils.h"
 
 Player::Player(
     EngineObject *parent,
@@ -90,5 +91,13 @@ Player::PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {
 Player::PlayerRenderer::~PlayerRenderer() {}
 
 void Player::PlayerRenderer::render() {
+    setSDLDrawColor(sdlRenderer, {255, 0, 0});
+    SDL_Rect colliderRect = {           // For debugging only, delete when done
+        (int) sprite.getCorners()[0],
+        (int) sprite.getCorners()[1],
+        (int) sprite.getDimensions().x,
+        (int) sprite.getDimensions().y    
+    };
+    SDL_RenderDrawRect(sdlRenderer, &colliderRect);
     sprite.draw(globalPos);
 }

@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "EnemyRenderer.h"
 
-const float Enemy::DAMAGE_DEALT = 100;
+const float Enemy::DAMAGE_DEALT = 10;
 
 Enemy::Enemy(
     EngineObject *parent,
@@ -22,6 +22,7 @@ void Enemy::update() {}
 
 EnemyRenderer::EnemyRenderer(Enemy *enemy) : Renderer(enemy) {
     this->enemy = enemy;
+    sprite.scaleDimensions(0.35);
 }
 
 EnemyRenderer::~EnemyRenderer() {}

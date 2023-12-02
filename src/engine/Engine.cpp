@@ -95,7 +95,7 @@ inline void Engine::update() {
         switch (event.type) {
             case SDL_QUIT:
                 quit = true;
-                break;
+                return;
         }
     }
     eventMgr->updateEvents();
@@ -122,6 +122,9 @@ inline void Engine::update() {
 }
 
 inline void Engine::render() {
+    if (quit) {
+        return;
+    }
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 

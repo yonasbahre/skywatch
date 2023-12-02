@@ -28,13 +28,31 @@ bool Collider::isColliding(Collider &other) {
         {ourCorners_[2], ourCorners_[3]}
     };
 
-    std::vector<float> otherCorners = other.getCorners();
+    std::vector<float> otherCorners_ = other.getCorners();
     for (Vec2D& corner : ourCorners) {
         if (
-            corner.x >= otherCorners[0] &&
-            corner.x <= otherCorners[2] &&
-            corner.y >= otherCorners[1] &&
-            corner.y <= otherCorners[3]
+            corner.x >= otherCorners_[0] &&
+            corner.x <= otherCorners_[2] &&
+            corner.y >= otherCorners_[1] &&
+            corner.y <= otherCorners_[3]
+        ) {
+            return true;
+        }
+    }
+
+    std::vector<Vec2D> otherCorners = {
+        {otherCorners_[0], otherCorners_[1]},
+        {otherCorners_[0], otherCorners_[3]},
+        {otherCorners_[2], otherCorners_[1]},
+        {otherCorners_[2], otherCorners_[3]}
+    };
+
+    for (Vec2D& corner : otherCorners) {
+        if (
+            corner.x >= ourCorners_[0] &&
+            corner.x <= ourCorners_[2] &&
+            corner.y >= ourCorners_[1] &&
+            corner.y <= ourCorners_[3]
         ) {
             return true;
         }
@@ -54,6 +72,10 @@ void Collider::updateCollisionState(Collider &other) {
     bool colliding = isColliding(other);
     
     if (!colliding && thisCollision != collisions.end()) {
+        onCollisionExit(*thisCollision);
+        Collision invertedCollision = {this};
+        other.onCollisionExit(invertedCollision);
+
         thisCollision->other->removeCollisionWith(*this);
         collisions.erase(thisCollision);
     } 

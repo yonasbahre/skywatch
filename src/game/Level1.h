@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "LevelMap.h"
 #include "Enemy.h"
+#include "Crow.h"
 
 class Level1 : public EngineObject {
     const Vec2D baseScreenTransform = 
@@ -28,6 +29,7 @@ class Level1 : public EngineObject {
     std::function<void(int)> updateCurrRoadSegment();
 
     Enemy sampleEnemy = Enemy(this, screenTransform);
+    Crow sampleCrow = Crow(this, screenTransform);
 
 public:
     Level1();

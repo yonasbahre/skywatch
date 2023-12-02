@@ -20,6 +20,7 @@ public:
 
     std::string tag;
     std::function<void(Collision&)> onCollisionStart = [](Collision&){};
+    std::function<void(Collision&)> onCollisionExit = [](Collision&){};
 
     std::vector<float> getCorners(); 
     bool isColliding(Collider &other);
