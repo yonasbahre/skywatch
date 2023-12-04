@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "Engine.h"
 #include "LevelDirectory.h"
+#include "ColliderTags.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "SDLUtils.h"
@@ -16,10 +17,10 @@ Player::Player(
     this->updateCurrRoadSegment = updateCurrRoadSegment;
     
     renderer.pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    collider.tag = "PLAYER";
+    collider.tag = PLAYER;
 
     collider.onCollisionStart = [this](Collision col) {
-        if (col.other->tag == "ENEMY") {
+        if (col.other->tag == ENEMY) {
             decreaseHealth(Enemy::DAMAGE_DEALT);
         }
     };

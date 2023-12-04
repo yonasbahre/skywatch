@@ -1,3 +1,4 @@
+#include "ColliderTags.h"
 #include "Crow.h"
 #include <iostream>
 
@@ -7,13 +8,13 @@ Crow::Crow(
 ) : EngineObject(parent), screenTransform(screenTransform_) {    
     collider.tag = "CROW";
     collider.onCollisionStart = [](Collision &col) {
-        if (col.other->tag == "PLAYER") {
+        if (col.other->tag == PLAYER) {
             std::cout << "You just hit a crow\n";
         }
     };
 
     collider.onCollisionExit = [](Collision &col) {
-        if (col.other->tag == "PLAYER") {
+        if (col.other->tag == PLAYER) {
             std::cout << "Collision exited\n";
         }
     };
@@ -23,16 +24,15 @@ Crow::Crow(
 
     sightCollider.tag = "CROW_SIGHT";
     sightCollider.onCollisionStart = [](Collision &col) {
-        if (col.other->tag == "PLAYER") {
+        if (col.other->tag == PLAYER) {
             std::cout << "The crow can see you\n";
         }
     };
 
     sightCollider.onCollisionExit = [this](Collision &col) {
-        if (col.other->tag == "PLAYER") {
+        if (col.other->tag == PLAYER) {
             std::cout << "The crow can't see you anymore\n";
-        } else std::cout << col.other->tag << " "<<
-               sightCollider.tag << std::endl;
+        }
     };
 
     renderer.pos = Vec2D(0, -300) + screenTransform;

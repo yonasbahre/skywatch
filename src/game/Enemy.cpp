@@ -1,3 +1,4 @@
+#include "ColliderTags.h"
 #include "Enemy.h"
 #include "EnemyRenderer.h"
 
@@ -7,7 +8,7 @@ Enemy::Enemy(
     EngineObject *parent,
     Vec2D const &screenTransform_
 ) : EngineObject(parent), screenTransform(screenTransform_) {
-    collider.tag = "ENEMY";
+    collider.tag = ENEMY;
 }
 
 Enemy::~Enemy() {}
