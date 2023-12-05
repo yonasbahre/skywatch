@@ -3,15 +3,12 @@
 
 Level1::Level1() {
     segments = 
-        std::vector<std::vector<EngineObject*>>(map.roadCoords.size());
+        std::vector<std::unordered_set<EngineObject*>>(map.roadCoords.size());
 }
 
 Level1::~Level1() {
-    for (std::vector<EngineObject*>& segment : segments) {
-        for (EngineObject *entity : segment) {
-            delete entity;
-        }
-        segment.clear();
+    for (int segmentIndex = 0; segmentIndex < segments.size(); segmentIndex++) {
+        unloadSegment(segmentIndex);
     }
     segments.clear();
 }

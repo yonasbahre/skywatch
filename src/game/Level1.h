@@ -1,4 +1,5 @@
 #include <functional>
+#include <unordered_set>
 #include "EngineObject.h"
 #include "Player.h"
 #include "LevelMap.h"
@@ -17,7 +18,7 @@ class Level1 : public EngineObject {
     );
     LevelMap map = LevelMap(this, screenTransform);
     
-    std::vector<std::vector<EngineObject*>> segments;
+    std::vector<std::unordered_set<EngineObject*>> segments;
     int currSegment = 0;
     const int LEFT_WINDOW_SIZE = 2;
     const int RIGHT_WINDOW_SIZE = 2;
