@@ -1,9 +1,14 @@
 #include <iostream>
 #include "Level1.h"
+#include "Utils.h"
 
 Level1::Level1() {
     segments = 
         std::vector<std::unordered_set<EngineObject*>>(map.roadCoords.size());
+
+    for (int segment = 0; segment <= RIGHT_WINDOW_SIZE; segment++) {
+        loadSegment(segment);
+    }
 }
 
 Level1::~Level1() {
@@ -16,11 +21,19 @@ Level1::~Level1() {
 void Level1::start() {
     player.registerAndStart();
     sampleCrow.registerAndStart();
-    sampleEnemy.registerAndStart();
+    segmentParent.registerAndStart();
     map.registerAndStart();
+    for (int segment = 0; segment <= RIGHT_WINDOW_SIZE; segment++) {
+        startSegment(segment);
+    }
 }
 
 void Level1::update() {
+    for (EngineObject *object : deletionQueue) {
+        deleteObjectFromSegment(object);
+    }
+    deletionQueue.clear();
+
     screenTransform = player.getWorldPos() + baseScreenTransform;
 }
 
@@ -28,6 +41,9 @@ void Level1::loadSegment(int index) {
     if (index < 0 || index >= segments.size()) {
         return;
     }
+
+    loadEnemiesInSegment(index);
+    loadCrowsInSegment(index);
 }
 
 void Level1::unloadSegment(int index) {
@@ -38,6 +54,119 @@ void Level1::unloadSegment(int index) {
         delete entity;
     }
     segments[index].clear();
+}
+
+void Level1::startSegment(int index) {
+    if (index < 0 || index >= segments.size()) {
+        return;
+    }
+    for (EngineObject *entity : segments[index]) {
+        entity->registerAndStart();
+    }
+}
+
+void Level1::loadEnemiesInSegment(int index) {
+    std::vector<float> roadRect = map.roadCoords[index];
+    float longSideLength = std::max(roadRect[2], roadRect[3]);
+    float segmentLengthThreshold = (map.MIN_SEGMENT_DIST + map.MAX_SEGMENT_DIST) / 1.5;
+
+    // Only load 1 enemy in this segment if the segment is small enough
+    if (longSideLength < segmentLengthThreshold) {
+        Enemy *newEnemy = new Enemy(&segmentParent, screenTransform);
+        newEnemy->pos = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+        newEnemy->onDestroy = queueForDeletion();
+        segments[index].insert(newEnemy);
+        return;
+    }
+
+    float length1 = (float) randInt(0, (int) longSideLength / 2);
+    float length2 = (float) randInt((int) longSideLength / 2, (int) longSideLength);
+    Vec2D pos1 = {0, 0}, pos2 = {0, 0};
+    
+    if (longSideLength == roadRect[2]) {
+        pos1 = {
+            roadRect[0] + length1,
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+        pos2 = {
+            roadRect[0] + length2,
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+    } else {
+        pos1 = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + length1
+        };
+        pos2 = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + length2
+        };
+    }
+
+    Enemy *newEnemy1 = new Enemy(&segmentParent, screenTransform);
+    newEnemy1->pos = pos1;
+    newEnemy1->onDestroy = queueForDeletion();
+    Enemy *newEnemy2 = new Enemy(&segmentParent, screenTransform);
+    newEnemy2->pos = pos2;
+    newEnemy2->onDestroy = queueForDeletion();
+
+    segments[index].insert(newEnemy1);
+    segments[index].insert(newEnemy2);
+}
+
+void Level1::loadCrowsInSegment(int index) {
+    std::vector<float> roadRect = map.roadCoords[index];
+    float longSideLength = std::max(roadRect[2], roadRect[3]);
+    float segmentLengthThreshold = (map.MIN_SEGMENT_DIST + map.MAX_SEGMENT_DIST) / 2;
+
+    // Only load 1 crow in this segment if the segment is small enough
+    if (longSideLength < segmentLengthThreshold) {
+        Crow *newCrow = new Crow(&segmentParent, screenTransform);
+        newCrow->pos = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+        newCrow->onDestroy = queueForDeletion();
+        segments[index].insert(newCrow);
+        return;
+    }
+
+    float length1 = (float) randInt(0, (int) longSideLength / 2);
+    float length2 = (float) randInt((int) longSideLength / 2, (int) longSideLength);
+    Vec2D pos1 = {0, 0}, pos2 = {0, 0};
+    
+    if (longSideLength == roadRect[2]) {
+        pos1 = {
+            roadRect[0] + length1,
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+        pos2 = {
+            roadRect[0] + length2,
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+    } else {
+        pos1 = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + length1
+        };
+        pos2 = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + length2
+        };
+    }
+
+    Crow *newCrow1 = new Crow(&segmentParent, screenTransform);
+    newCrow1->pos = pos1;
+    newCrow1->onDestroy = queueForDeletion();
+    Crow *newCrow2 = new Crow(&segmentParent, screenTransform);
+    newCrow2->pos = pos2;
+    newCrow2->onDestroy = queueForDeletion();
+
+    segments[index].insert(newCrow1);
+    segments[index].insert(newCrow2);
 }
 
 std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {
@@ -103,9 +232,33 @@ std::function<void(int)> Level1::updateCurrRoadSegment() {
         if (prevSegment < currSegment) {
             loadSegment(currSegment + RIGHT_WINDOW_SIZE);
             unloadSegment(currSegment - LEFT_WINDOW_SIZE - 1);
+            startSegment(currSegment + RIGHT_WINDOW_SIZE);
         } else {
             loadSegment(currSegment - LEFT_WINDOW_SIZE);
             unloadSegment(currSegment + RIGHT_WINDOW_SIZE + 1);
+            startSegment(currSegment - LEFT_WINDOW_SIZE);
         }
     };
+}
+
+std::function<void(EngineObject*)> Level1::queueForDeletion() {
+    return [this](EngineObject *object) {
+        deletionQueue.push_back(object);
+    };
+}
+
+void Level1::deleteObjectFromSegment(EngineObject *object) {
+    for (
+        int segment = std::max(0, currSegment - LEFT_WINDOW_SIZE);
+        segment <= std::min((int) segments.size() - 1, currSegment + RIGHT_WINDOW_SIZE);
+        segment++
+    ) {
+        auto iter = segments[segment].find(object);
+        if (iter == segments[segment].end()) {
+            continue;
+        }
+
+        segments[segment].erase(iter);
+        delete object;
+    }
 }

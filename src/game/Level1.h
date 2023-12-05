@@ -18,6 +18,15 @@ class Level1 : public EngineObject {
     );
     LevelMap map = LevelMap(this, screenTransform);
     
+    // Empty parent node that contains everything that renders in segments
+    // This hack is necessary to make sure everything renders in the correct order
+    // Lesson learned: dont tie render order to when an object's start() method is called
+    struct SegmentParent : public EngineObject {
+        void start() {}
+        void update() {}
+    };
+    SegmentParent segmentParent;
+
     std::vector<std::unordered_set<EngineObject*>> segments;
     int currSegment = 0;
     const int LEFT_WINDOW_SIZE = 2;
@@ -25,11 +34,20 @@ class Level1 : public EngineObject {
 
     void loadSegment(int index);
     void unloadSegment(int index);
+    void startSegment(int index);
+
+    void loadEnemiesInSegment(int index);
+    void loadCrowsInSegment(int index);
 
     std::function<int(Vec2D)> getRoadSegmentOfPoint();
     std::function<void(int)> updateCurrRoadSegment();
+    
+    // Items are not actually deleted from a segment until
+    // the start of the next frame
+    std::function<void(EngineObject*)> queueForDeletion();
+    std::vector<EngineObject*> deletionQueue;
+    void deleteObjectFromSegment(EngineObject *object);
 
-    Enemy sampleEnemy = Enemy(this, screenTransform);
     Crow sampleCrow = Crow(this, screenTransform);
 
 public:

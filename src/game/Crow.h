@@ -39,6 +39,8 @@ public:
     ~Crow();
 
     Vec2D const &screenTransform;
+    std::function<void(EngineObject*)> onDestroy;
+    Vec2D pos = {0, 0};
     
     Renderer *getRenderer() override;
     void start();

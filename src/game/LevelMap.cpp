@@ -1,6 +1,5 @@
 #include <iostream>
-#include <ctime>
-#include <random>
+#include "Utils.h"
 #include "LevelMap.h"
 #include "SDLUtils.h"
 
@@ -18,12 +17,6 @@ Renderer *LevelMap::getRenderer() {
 void LevelMap::start() {}
 
 void LevelMap::update() {}
-
-int LevelMap::randInt(int min, int max) {
-    static std::mt19937 eng(time(nullptr));
-    std::uniform_int_distribution<int> distribution(min, max);
-    return distribution(eng);
-}
 
 void LevelMap::generateRoads() {
     startPoint = Vec2D(0, 0);

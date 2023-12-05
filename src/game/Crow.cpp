@@ -6,7 +6,7 @@ Crow::Crow(
     EngineObject *parent, 
     Vec2D const &screenTransform_
 ) : EngineObject(parent), screenTransform(screenTransform_) {    
-    collider.tag = "CROW";
+    collider.tag = CROW;
     collider.onCollisionStart = [](Collision &col) {
         if (col.other->tag == PLAYER) {
             std::cout << "You just hit a crow\n";
@@ -22,7 +22,7 @@ Crow::Crow(
     sightColliderSprite.scaleDimensions(2 * SIGHTING_DISTANCE);
     sightColliderSprite.setIsCentered(true);
 
-    sightCollider.tag = "CROW_SIGHT";
+    sightCollider.tag = CROW_SIGHT;
     sightCollider.onCollisionStart = [](Collision &col) {
         if (col.other->tag == PLAYER) {
             std::cout << "The crow can see you\n";
@@ -34,9 +34,6 @@ Crow::Crow(
             std::cout << "The crow can't see you anymore\n";
         }
     };
-
-    renderer.pos = Vec2D(0, -300) + screenTransform;
-    sightColliderSprite.setPos(renderer.globalPos);
 }
 
 Crow::~Crow() {}
@@ -48,12 +45,13 @@ Renderer *Crow::getRenderer() {
 void Crow::start() {}
 
 void Crow::update() {
-    renderer.pos = Vec2D(0, -300) + screenTransform;
+    renderer.pos = this->pos + screenTransform;
     sightColliderSprite.setPos(renderer.globalPos);
 }
 
 Crow::CrowRenderer::CrowRenderer(Crow *crow) : Renderer(crow) {
     this->crow = crow;
+    sprite.scaleDimensions(0.5);
     sprite.setIsCentered(true);
 }
 

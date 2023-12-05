@@ -16,19 +16,18 @@ class LevelMap : public EngineObject {
     };
     
     LevelMapRenderer renderer = LevelMapRenderer(this);
-    int randInt(int min, int max);
     void generateRoads();
 
+    Vec2D startPoint = Vec2D(0, 0);
+    Vec2D endPoint = Vec2D(0, 0);
+
+public:
     const float MIN_TOTAL_DIST = 50000;
     const float MAX_TOTAL_DIST = 90000;
 
     const float MIN_SEGMENT_DIST = 800;
     const float MAX_SEGMENT_DIST = 2000;
 
-    Vec2D startPoint = Vec2D(0, 0);
-    Vec2D endPoint = Vec2D(0, 0);
-
-public:
     LevelMap(EngineObject *parent, Vec2D const &screenTransform);
     ~LevelMap();
 

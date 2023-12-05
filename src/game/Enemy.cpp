@@ -19,15 +19,18 @@ Renderer *Enemy::getRenderer() {
 
 void Enemy::start() {}
 
-void Enemy::update() {}
+void Enemy::update() {
+    renderer.pos = this->pos;
+}
 
 EnemyRenderer::EnemyRenderer(Enemy *enemy) : Renderer(enemy) {
     this->enemy = enemy;
+    sprite.setIsCentered(true);
     sprite.scaleDimensions(0.35);
 }
 
 EnemyRenderer::~EnemyRenderer() {}
 
 void EnemyRenderer::render() {
-    sprite.draw(Vec2D(0, 300) + enemy->screenTransform);
+    sprite.draw(globalPos + enemy->screenTransform);
 }
