@@ -3,20 +3,22 @@
 #include "EngineObject.h"
 #include "Player.h"
 #include "LevelMap.h"
-#include "Enemy.h"
-#include "Crow.h"
+#include "LevelUI.h"
 
 class Level1 : public EngineObject {
     const Vec2D baseScreenTransform = 
         Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     Vec2D screenTransform = baseScreenTransform;
 
+    LevelMap map = LevelMap(this, screenTransform);
+    LevelUI ui = LevelUI(this);
+
     Player player = Player(
         this,
+        ui,
         getRoadSegmentOfPoint(),
         updateCurrRoadSegment()
     );
-    LevelMap map = LevelMap(this, screenTransform);
     
     // Empty parent node that contains everything that renders in segments
     // This hack is necessary to make sure everything renders in the correct order
@@ -24,8 +26,10 @@ class Level1 : public EngineObject {
     struct SegmentParent : public EngineObject {
         void start() {}
         void update() {}
+
+        SegmentParent(EngineObject *parent) : EngineObject(parent) {}
     };
-    SegmentParent segmentParent;
+    SegmentParent segmentParent = SegmentParent(this);
 
     std::vector<std::unordered_set<EngineObject*>> segments;
     int currSegment = 0;
@@ -38,6 +42,7 @@ class Level1 : public EngineObject {
 
     void loadEnemiesInSegment(int index);
     void loadCrowsInSegment(int index);
+    void loadBreadInSegment(int index);
 
     std::function<int(Vec2D)> getRoadSegmentOfPoint();
     std::function<void(int)> updateCurrRoadSegment();
@@ -47,8 +52,6 @@ class Level1 : public EngineObject {
     std::function<void(EngineObject*)> queueForDeletion();
     std::vector<EngineObject*> deletionQueue;
     void deleteObjectFromSegment(EngineObject *object);
-
-    Crow sampleCrow = Crow(this, screenTransform);
 
 public:
     Level1();

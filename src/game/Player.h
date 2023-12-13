@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "EventManager.h"
 #include "Collider.h"
+#include "LevelUI.h"
 
 class Player : public EngineObject {
     class PlayerRenderer : public Renderer {
@@ -17,13 +18,14 @@ class Player : public EngineObject {
     EventManager *eventMgr = nullptr;
     PlayerRenderer renderer = PlayerRenderer(this);
     Collider collider = Collider(renderer.sprite);
+    LevelUI &ui;
 
     const float speed = 0.2;
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
 
-    const float maxHealth = 100;
-    float health = maxHealth;
+    const float MAX_HEALTH = 100;
+    float health = MAX_HEALTH;
 
     std::function<int(Vec2D)> getRoadSegmentOfPoint;
     std::function<void(int)> updateCurrRoadSegment;
@@ -31,6 +33,7 @@ class Player : public EngineObject {
 public:
     Player(
         EngineObject *parent,
+        LevelUI &ui_,
         std::function<int(Vec2D)> getRoadSegmentOfPoint,
         std::function<void(int)> updateCurrRoadSegment
     );

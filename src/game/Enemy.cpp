@@ -1,6 +1,7 @@
 #include "ColliderTags.h"
 #include "Enemy.h"
 #include "EnemyRenderer.h"
+#include <iostream>
 
 const float Enemy::DAMAGE_DEALT = 10;
 
@@ -17,7 +18,10 @@ Renderer *Enemy::getRenderer() {
     return &renderer;
 }
 
-void Enemy::start() {}
+void Enemy::start() {
+    renderer.pos = this->pos;
+    renderer.sprite.setPos(renderer.pos);
+}
 
 void Enemy::update() {
     renderer.pos = this->pos;

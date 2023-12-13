@@ -10,9 +10,10 @@
 
 Player::Player(
     EngineObject *parent,
+    LevelUI &ui_,
     std::function<int(Vec2D)> getRoadSegmentOfPoint,
     std::function<void(int)> updateCurrRoadSegment
-) : EngineObject(parent) {
+) : EngineObject(parent), ui(ui_) {
     this->getRoadSegmentOfPoint = getRoadSegmentOfPoint;
     this->updateCurrRoadSegment = updateCurrRoadSegment;
     
@@ -22,6 +23,14 @@ Player::Player(
     collider.onCollisionStart = [this](Collision col) {
         if (col.other->tag == ENEMY) {
             decreaseHealth(Enemy::DAMAGE_DEALT);
+            ui.sendMsgToConsole("You got hit by an enemy!");
+        } else if (col.other->tag == BREAD) {
+            std::cout << "You picked up some bread!\n";
+            ui.sendMsgToConsole("You picked up some bread!");
+            // TODO: increment bread count
+        } else if (col.other->tag == CROW) {
+            // TODO: for testing, delete later
+            ui.sendMsgToConsole("You hit a crow!");
         }
     };
 
@@ -34,7 +43,10 @@ Renderer *Player::getRenderer() {
     return &renderer;
 }
 
-void Player::start() {}
+void Player::start() {
+    health = MAX_HEALTH;
+    ui.updateHealthUI(health);
+}
 
 void Player::update() {
     float scaleFactor = eventMgr->keyStates[SDL_SCANCODE_LSHIFT] ? sprintScale : 1;
@@ -78,6 +90,7 @@ Vec2D Player::getWorldPos() {
 void Player::decreaseHealth(float amount) {
     float prevHealth = health;
     health -= amount;
+    ui.updateHealthUI(health);
 
     if (health <= 0) {
         Engine::getEngine()->loadLevel(LEVEL_1);

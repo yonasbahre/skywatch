@@ -1,6 +1,9 @@
 #include <iostream>
 #include "Level1.h"
 #include "Utils.h"
+#include "Enemy.h"
+#include "Crow.h"
+#include "Bread.h"
 
 Level1::Level1() {
     segments = 
@@ -19,8 +22,8 @@ Level1::~Level1() {
 }
 
 void Level1::start() {
+    ui.registerAndStart();
     player.registerAndStart();
-    sampleCrow.registerAndStart();
     segmentParent.registerAndStart();
     map.registerAndStart();
     for (int segment = 0; segment <= RIGHT_WINDOW_SIZE; segment++) {
@@ -44,6 +47,7 @@ void Level1::loadSegment(int index) {
 
     loadEnemiesInSegment(index);
     loadCrowsInSegment(index);
+    loadBreadInSegment(index);
 }
 
 void Level1::unloadSegment(int index) {
@@ -69,6 +73,10 @@ void Level1::loadEnemiesInSegment(int index) {
     std::vector<float> roadRect = map.roadCoords[index];
     float longSideLength = std::max(roadRect[2], roadRect[3]);
     float segmentLengthThreshold = (map.MIN_SEGMENT_DIST + map.MAX_SEGMENT_DIST) / 1.5;
+
+    if (index == 0) {
+        return;
+    }
 
     // Only load 1 enemy in this segment if the segment is small enough
     if (longSideLength < segmentLengthThreshold) {
@@ -167,6 +175,26 @@ void Level1::loadCrowsInSegment(int index) {
 
     segments[index].insert(newCrow1);
     segments[index].insert(newCrow2);
+}
+
+void Level1::loadBreadInSegment(int index) {
+    std::vector<float> roadRect = map.roadCoords[index];
+
+    for (int i = 0; i < 2; i++) {
+        bool decideToSpawn = randInt(0, 10) > 7;
+        if (!decideToSpawn) {
+            continue;
+        }
+
+        Bread *newBread = new Bread(&segmentParent, screenTransform);
+        newBread->getRenderer()->pos = {
+            roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+            roadRect[1] + (float) randInt(0, (int) roadRect[3])
+        };
+        newBread->onDestroy = queueForDeletion();
+
+        segments[index].insert(newBread);
+    }
 }
 
 std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {
