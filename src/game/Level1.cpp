@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "Crow.h"
 #include "Bread.h"
+#include "Pebble.h"
 
 Level1::Level1() {
     segments = 
@@ -48,6 +49,7 @@ void Level1::loadSegment(int index) {
     loadEnemiesInSegment(index);
     loadCrowsInSegment(index);
     loadBreadInSegment(index);
+    loadPebblesInSegment(index);
 }
 
 void Level1::unloadSegment(int index) {
@@ -195,6 +197,24 @@ void Level1::loadBreadInSegment(int index) {
 
         segments[index].insert(newBread);
     }
+}
+
+void Level1::loadPebblesInSegment(int index) {
+    std::vector<float> roadRect = map.roadCoords[index];
+
+    bool decideToSpawn = randInt(0, 10) > 8;
+    if (!decideToSpawn) {
+        return;
+    }
+
+    Pebble *newPebble = new Pebble(&segmentParent, screenTransform);
+    newPebble->getRenderer()->pos = {
+        roadRect[0] + (float) randInt(0, (int) roadRect[2]),
+        roadRect[1] + (float) randInt(0, (int) roadRect[3])
+    };
+    newPebble->onDestroy = queueForDeletion();
+
+    segments[index].insert(newPebble);  
 }
 
 std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {

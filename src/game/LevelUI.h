@@ -13,6 +13,18 @@ class LevelUI : public EngineObject {
             24
         );
 
+        Text breadCountText = Text(
+            this->sdlRenderer,
+            "assets/Imperator.ttf",
+            24
+        );
+
+        Text ammoCountText = Text(
+            this->sdlRenderer,
+            "assets/Imperator.ttf",
+            24
+        );
+
         Text consoleText = Text(
             this->sdlRenderer,
             "assets/Imperator.ttf",
@@ -39,5 +51,7 @@ public:
     void update();
 
     void updateHealthUI(float health);
+    void updateBreadCountUI(float breadCount);
+    void updateAmmoCountUI(int ammoCount);
     void sendMsgToConsole(std::string msg);
 };

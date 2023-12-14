@@ -43,6 +43,7 @@ class Level1 : public EngineObject {
     void loadEnemiesInSegment(int index);
     void loadCrowsInSegment(int index);
     void loadBreadInSegment(int index);
+    void loadPebblesInSegment(int index);
 
     std::function<int(Vec2D)> getRoadSegmentOfPoint();
     std::function<void(int)> updateCurrRoadSegment();

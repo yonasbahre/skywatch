@@ -23,11 +23,11 @@ Player::Player(
     collider.onCollisionStart = [this](Collision col) {
         if (col.other->tag == ENEMY) {
             decreaseHealth(Enemy::DAMAGE_DEALT);
-            ui.sendMsgToConsole("You got hit by an enemy!");
         } else if (col.other->tag == BREAD) {
-            std::cout << "You picked up some bread!\n";
-            ui.sendMsgToConsole("You picked up some bread!");
-            // TODO: increment bread count
+            pickupBread();
+        } else if (col.other->tag == PEBBLE) {
+            pickupAmmo();
+            ui.sendMsgToConsole("You picked up some pebbles!");
         } else if (col.other->tag == CROW) {
             // TODO: for testing, delete later
             ui.sendMsgToConsole("You hit a crow!");
@@ -46,6 +46,8 @@ Renderer *Player::getRenderer() {
 void Player::start() {
     health = MAX_HEALTH;
     ui.updateHealthUI(health);
+    ui.updateBreadCountUI(breadCount);
+    ui.updateAmmoCountUI(ammoCount);
 }
 
 void Player::update() {
@@ -91,10 +93,22 @@ void Player::decreaseHealth(float amount) {
     float prevHealth = health;
     health -= amount;
     ui.updateHealthUI(health);
+    ui.sendMsgToConsole("You got hit by an enemy!");
 
     if (health <= 0) {
         Engine::getEngine()->loadLevel(LEVEL_1);
     }
+}
+
+void Player::pickupBread() {
+    breadCount += 4;
+    ui.updateBreadCountUI(breadCount);
+    ui.sendMsgToConsole("You picked up some bread!");
+}
+
+void Player::pickupAmmo() {
+    ammoCount += 2;
+    ui.updateAmmoCountUI(ammoCount);
 }
 
 Player::PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {

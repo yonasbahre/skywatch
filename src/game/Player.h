@@ -27,8 +27,14 @@ class Player : public EngineObject {
     const float MAX_HEALTH = 100;
     float health = MAX_HEALTH;
 
+    float breadCount = 0;
+    int ammoCount = 8;
+
     std::function<int(Vec2D)> getRoadSegmentOfPoint;
     std::function<void(int)> updateCurrRoadSegment;
+
+    void pickupBread();
+    void pickupAmmo();
 
 public:
     Player(
