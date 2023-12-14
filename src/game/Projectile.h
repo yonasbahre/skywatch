@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "Collider.h"
 
+// Do not allocate on stack
 class Projectile : public EngineObject {
     class ProjectileRenderer : public Renderer {
         Projectile *projectile = nullptr;
@@ -18,9 +19,12 @@ class Projectile : public EngineObject {
     Collider collider = Collider(renderer.sprite);
 
     const float SPEED = 5.0f;
-    const long TIME_TO_DELETE_MILLISECONDS = 2000;
+    
+    const int TIME_TO_DELETE_MILLISECONDS = 2000;
     bool deleteOnNextFrame = false; 
-    bool *isDeleted = nullptr;  // for ending threads
+    SDL_Thread *selfDestructThread = nullptr;
+    bool *isDeleted = nullptr;  // for ending thread
+    static int destroyAfterTimer(void *thisProjectile);
 
 public:
     Projectile(
@@ -28,6 +32,8 @@ public:
         Vec2D const &screenTransform_
     );
     ~Projectile();
+
+    Vec2D pos = {0, 0};
 
     Vec2D const &screenTransform;
     std::function<void(EngineObject*)> onDestroy;

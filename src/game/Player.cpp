@@ -6,6 +6,7 @@
 #include "ColliderTags.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Projectile.h"
 #include "SDLUtils.h"
 
 Player::Player(
@@ -61,6 +62,11 @@ void Player::update() {
         setWorldPos(worldPos + Vec2D(scaleFactor * speed, 0));
     } else if (eventMgr->keyStates[SDL_SCANCODE_D] || eventMgr->keyStates[SDL_SCANCODE_RIGHT]) {
         setWorldPos(worldPos + Vec2D(scaleFactor * -speed, 0));
+    }
+
+    if (eventMgr->keyStates[SDL_SCANCODE_SPACE]) {
+        Projectile *projectile = new Projectile(this, tempTransform);
+        projectile->registerAndStart();
     }
 }
 

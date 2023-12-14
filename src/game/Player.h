@@ -23,6 +23,7 @@ class Player : public EngineObject {
     const float speed = 0.2;
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
+    Vec2D tempTransform = {200, 0};
 
     const float MAX_HEALTH = 100;
     float health = MAX_HEALTH;
