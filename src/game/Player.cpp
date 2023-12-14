@@ -1,22 +1,22 @@
 #include <iostream>
 #include <algorithm>
-#include "Constants.h"
 #include "Engine.h"
 #include "LevelDirectory.h"
 #include "ColliderTags.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Projectile.h"
 #include "SDLUtils.h"
 
 Player::Player(
     EngineObject *parent,
     LevelUI &ui_,
     std::function<int(Vec2D)> getRoadSegmentOfPoint,
-    std::function<void(int)> updateCurrRoadSegment
+    std::function<void(int)> updateCurrRoadSegment,
+    std::function<void(Direction)> fireProjectile
 ) : EngineObject(parent), ui(ui_) {
     this->getRoadSegmentOfPoint = getRoadSegmentOfPoint;
     this->updateCurrRoadSegment = updateCurrRoadSegment;
+    this->fireProjectile = fireProjectile;
     
     renderer.pos = Vec2D(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     collider.tag = PLAYER;
@@ -56,17 +56,27 @@ void Player::update() {
 
     if (eventMgr->keyStates[SDL_SCANCODE_W] || eventMgr->keyStates[SDL_SCANCODE_UP]) {
         setWorldPos(worldPos + Vec2D(0, scaleFactor * speed));
+        lastDirection = UP;
     } else if (eventMgr->keyStates[SDL_SCANCODE_S] || eventMgr->keyStates[SDL_SCANCODE_DOWN]) {
         setWorldPos(worldPos + Vec2D(0, scaleFactor * -speed));
+        lastDirection = DOWN;
     } else if (eventMgr->keyStates[SDL_SCANCODE_A] || eventMgr->keyStates[SDL_SCANCODE_LEFT]) {
         setWorldPos(worldPos + Vec2D(scaleFactor * speed, 0));
+        lastDirection = LEFT;
     } else if (eventMgr->keyStates[SDL_SCANCODE_D] || eventMgr->keyStates[SDL_SCANCODE_RIGHT]) {
         setWorldPos(worldPos + Vec2D(scaleFactor * -speed, 0));
+        lastDirection = RIGHT;
     }
 
     if (eventMgr->keyStates[SDL_SCANCODE_SPACE]) {
-        Projectile *projectile = new Projectile(this, tempTransform);
-        projectile->registerAndStart();
+        if (!isSpacebarDown && ammoCount > 0) {
+            fireProjectile(lastDirection);
+            ammoCount--;
+            ui.updateAmmoCountUI(ammoCount);
+            isSpacebarDown = true;
+        }
+    } else {
+        isSpacebarDown = false;
     }
 }
 

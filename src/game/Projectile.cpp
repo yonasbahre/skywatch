@@ -1,12 +1,37 @@
 #include "Projectile.h"
 #include "ColliderTags.h"
-#include <iostream>
 
 Projectile::Projectile(
     EngineObject *parent,
-    Vec2D const &screenTransform_
-) : EngineObject(parent), screenTransform(screenTransform_) {
+    Vec2D const &screenTransform_,
+    Vec2D startPos,
+    Direction direction_
+) : EngineObject(parent), 
+    screenTransform(screenTransform_), 
+    pos(startPos), 
+    direction(direction_) 
+{
     collider.tag = PLAYER_PROJECTILE;
+    collider.onCollisionStart = [this](Collision col) {
+        if (col.other->tag == ENEMY) {
+            deleteOnNextFrame = true;
+        }
+    };
+
+    switch (direction) {
+        case UP:
+            velocity = {0, -SPEED};
+            break;
+        case DOWN:
+            velocity = {0, SPEED};
+            break;
+        case LEFT:
+            velocity = {-SPEED, 0};
+            break;
+        case RIGHT:
+            velocity = {SPEED, 0};
+            break;
+    }
 }
 
 Projectile::~Projectile() {
@@ -33,7 +58,8 @@ void Projectile::update() {
         return;
     }
 
-    renderer.pos = this->pos;
+    pos = pos + velocity;
+    renderer.pos = pos;
 }
 
 int Projectile::destroyAfterTimer(void *thisProjectile) {

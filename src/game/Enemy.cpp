@@ -10,6 +10,11 @@ Enemy::Enemy(
     Vec2D const &screenTransform_
 ) : EngineObject(parent), screenTransform(screenTransform_) {
     collider.tag = ENEMY;
+    collider.onCollisionStart = [this](Collision col) {
+        if (col.other->tag == PLAYER_PROJECTILE) {
+            onDestroy(this);
+        }
+    };
 }
 
 Enemy::~Enemy() {}

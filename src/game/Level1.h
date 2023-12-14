@@ -1,9 +1,11 @@
+#pragma once
 #include <functional>
 #include <unordered_set>
 #include "EngineObject.h"
 #include "Player.h"
 #include "LevelMap.h"
 #include "LevelUI.h"
+#include "Direction.h"
 
 class Level1 : public EngineObject {
     const Vec2D baseScreenTransform = 
@@ -17,7 +19,8 @@ class Level1 : public EngineObject {
         this,
         ui,
         getRoadSegmentOfPoint(),
-        updateCurrRoadSegment()
+        updateCurrRoadSegment(),
+        fireProjectileCallback()
     );
     
     // Empty parent node that contains everything that renders in segments
@@ -53,6 +56,8 @@ class Level1 : public EngineObject {
     std::function<void(EngineObject*)> queueForDeletion();
     std::vector<EngineObject*> deletionQueue;
     void deleteObjectFromSegment(EngineObject *object);
+
+    std::function<void(Direction)> fireProjectileCallback();
 
 public:
     Level1();

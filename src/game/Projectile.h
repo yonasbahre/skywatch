@@ -2,6 +2,7 @@
 #include "EngineObject.h"
 #include "Sprite.h"
 #include "Collider.h"
+#include "Direction.h"
 
 // Do not allocate on stack
 class Projectile : public EngineObject {
@@ -18,7 +19,9 @@ class Projectile : public EngineObject {
     ProjectileRenderer renderer = ProjectileRenderer(this);
     Collider collider = Collider(renderer.sprite);
 
-    const float SPEED = 5.0f;
+    const float SPEED = 1.0f;
+    Direction direction = UP;
+    Vec2D velocity = {0, 0};
     
     const int TIME_TO_DELETE_MILLISECONDS = 2000;
     bool deleteOnNextFrame = false; 
@@ -29,11 +32,13 @@ class Projectile : public EngineObject {
 public:
     Projectile(
         EngineObject *parent,
-        Vec2D const &screenTransform_
+        Vec2D const &screenTransform_,
+        Vec2D startPos,
+        Direction direction_
     );
     ~Projectile();
 
-    Vec2D pos = {0, 0};
+    Vec2D pos;
 
     Vec2D const &screenTransform;
     std::function<void(EngineObject*)> onDestroy;

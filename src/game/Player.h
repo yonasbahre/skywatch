@@ -1,9 +1,12 @@
+#pragma once
 #include <functional>
 #include "EngineObject.h"
 #include "Sprite.h"
 #include "EventManager.h"
 #include "Collider.h"
 #include "LevelUI.h"
+#include "Constants.h"
+#include "Direction.h"
 
 class Player : public EngineObject {
     class PlayerRenderer : public Renderer {
@@ -23,7 +26,7 @@ class Player : public EngineObject {
     const float speed = 0.2;
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
-    Vec2D tempTransform = {200, 0};
+    Direction lastDirection = UP;
 
     const float MAX_HEALTH = 100;
     float health = MAX_HEALTH;
@@ -33,16 +36,20 @@ class Player : public EngineObject {
 
     std::function<int(Vec2D)> getRoadSegmentOfPoint;
     std::function<void(int)> updateCurrRoadSegment;
-
+    
     void pickupBread();
     void pickupAmmo();
+
+    std::function<void(Direction)> fireProjectile;
+    bool isSpacebarDown = false;
 
 public:
     Player(
         EngineObject *parent,
         LevelUI &ui_,
         std::function<int(Vec2D)> getRoadSegmentOfPoint,
-        std::function<void(int)> updateCurrRoadSegment
+        std::function<void(int)> updateCurrRoadSegment,
+        std::function<void(Direction)> fireProjectile
     );
 
     ~Player();

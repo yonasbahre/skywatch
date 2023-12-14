@@ -5,6 +5,7 @@
 #include "Crow.h"
 #include "Bread.h"
 #include "Pebble.h"
+#include "Projectile.h"
 
 Level1::Level1() {
     segments = 
@@ -309,4 +310,16 @@ void Level1::deleteObjectFromSegment(EngineObject *object) {
         segments[segment].erase(iter);
         delete object;
     }
+}
+
+std::function<void(Direction)> Level1::fireProjectileCallback() {
+    return [this](Direction lastDirection) {
+        Projectile *projectile = new Projectile(
+            &segmentParent, 
+            screenTransform,
+            player.getWorldPos() * Vec2D(-1, -1),
+            lastDirection
+        );
+        projectile->registerAndStart();
+    };
 }
