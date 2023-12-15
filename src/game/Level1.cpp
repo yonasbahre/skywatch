@@ -87,7 +87,7 @@ void Level1::loadEnemiesInSegment(int index) {
             roadRect[0] + (float) randInt(0, (int) roadRect[2]),
             roadRect[1] + (float) randInt(0, (int) roadRect[3])
         };        
-        Enemy *newEnemy = new Enemy(&segmentParent, screenTransform, startPos);
+        Enemy *newEnemy = new Enemy(&segmentParent, screenTransform, startPos, player);
         newEnemy->onDestroy = queueForDeletion();
         segments[index].insert(newEnemy);
         return;
@@ -117,9 +117,9 @@ void Level1::loadEnemiesInSegment(int index) {
         };
     }
 
-    Enemy *newEnemy1 = new Enemy(&segmentParent, screenTransform, pos1);
+    Enemy *newEnemy1 = new Enemy(&segmentParent, screenTransform, pos1, player);
     newEnemy1->onDestroy = queueForDeletion();
-    Enemy *newEnemy2 = new Enemy(&segmentParent, screenTransform, pos2);
+    Enemy *newEnemy2 = new Enemy(&segmentParent, screenTransform, pos2, player);
     newEnemy2->onDestroy = queueForDeletion();
 
     segments[index].insert(newEnemy1);

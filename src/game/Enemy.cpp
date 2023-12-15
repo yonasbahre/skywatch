@@ -9,12 +9,20 @@ const float Enemy::DAMAGE_DEALT = 10;
 Enemy::Enemy(
     EngineObject *parent,
     Vec2D const &screenTransform_,
-    Vec2D startPos_
-) : EngineObject(parent), screenTransform(screenTransform_), startPos(startPos_) {
+    Vec2D startPos_,
+    Player &player_
+) : EngineObject(parent), 
+    screenTransform(screenTransform_), 
+    startPos(startPos_),
+    player(player_)
+{
     collider.tag = ENEMY;
     collider.onCollisionStart = [this](Collision col) {
         if (col.other->tag == PLAYER_PROJECTILE) {
             onDestroy(this);
+        }
+        if (col.other->tag == PLAYER) {
+            handlePlayerCollision();
         }
     };
 
@@ -38,6 +46,20 @@ void Enemy::start() {
 void Enemy::update() {
     state->update();
     renderer.pos = this->pos;
+}
+
+void Enemy::setState(EnemyState *newState) {
+    EnemyState *oldState = state;
+    state = newState;
+    delete oldState;
+}
+
+Vec2D Enemy::getPlayerDistance() {
+    return pos - (player.getWorldPos() * Vec2D(-1, -1));
+}
+
+void Enemy::handlePlayerCollision() {
+    setState(new EnemyCooldownState(*this));
 }
 
 EnemyRenderer::EnemyRenderer(Enemy *enemy) : Renderer(enemy) {
