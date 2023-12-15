@@ -1,12 +1,13 @@
 #include <chrono>
 #include "EnemyState.h"
 #include "Utils.h"
+#include "GameUtils.h"
 
 EnemyState::EnemyState(Enemy &enemy_) : enemy(enemy_) {}
 
 EnemyIdleState::EnemyIdleState(Enemy &enemy_) : EnemyState(enemy_) {
     Direction direction = (Direction) randInt(0, 3);
-    velocity = getVelocityFromDirection(direction);
+    velocity = getVelocityFromDirection(direction, IDLE_SPEED);
 }
 
 void EnemyIdleState::update() {
@@ -28,36 +29,16 @@ void EnemyIdleState::update() {
         velocity = velocity * Vec2D(-1, -1);
     } else if (randInt(1, 500) <= 1) {
         Direction newDirection = (Direction) randInt(0, 3);
-        velocity = getVelocityFromDirection(newDirection);
+        velocity = getVelocityFromDirection(newDirection, IDLE_SPEED);
     }
 
     enemy.pos = enemy.pos + velocity;
 }
 
-Vec2D EnemyIdleState::getVelocityFromDirection(Direction direction) {
-    switch (direction) {
-        case UP:
-            return {0, IDLE_SPEED};
-        case DOWN:
-            return {0, -IDLE_SPEED};
-        case LEFT:
-            return {-IDLE_SPEED, 0};
-        case RIGHT:
-            return {IDLE_SPEED, 0};
-        default:
-            return {IDLE_SPEED, 0};
-    }
-}
 
 EnemyAttackState::EnemyAttackState(Enemy &enemy_) : EnemyState(enemy_) {    
     Vec2D playerDistance = enemy.getPlayerDistance();
-    if (std::abs(playerDistance.x) > std::abs(playerDistance.y)) {
-        float directionSign = playerDistance.x < 0 ? -1 : 1;
-        velocity = {directionSign * ATTACK_SPEED, 0};
-    } else {
-        float directionSign = playerDistance.y < 0 ? -1 : 1;
-        velocity = {0, directionSign * ATTACK_SPEED};
-    }
+    velocity = getVelocityTowardPosition(playerDistance, {1, 1}, ATTACK_SPEED);
 }
 
 void EnemyAttackState::update() {
@@ -70,25 +51,26 @@ void EnemyAttackState::update() {
         return;
     }
 
-    bool xSignsMatch = 
-        playerDistance.x < 0 == velocity.x < 0 &&
-        (playerDistance.x == 0) == (velocity.x == 0) &&
-        playerDistance.x > 0 == velocity.x > 0;
-    bool ySignsMatch =
-        playerDistance.y < 0 == velocity.y < 0 &&
-        (playerDistance.y == 0) == (velocity.y == 0) &&
-        playerDistance.y > 0 == velocity.y > 0;
+    // bool xSignsMatch = 
+    //     playerDistance.x < 0 == velocity.x < 0 &&
+    //     (playerDistance.x == 0) == (velocity.x == 0) &&
+    //     playerDistance.x > 0 == velocity.x > 0;
+    // bool ySignsMatch =
+    //     playerDistance.y < 0 == velocity.y < 0 &&
+    //     (playerDistance.y == 0) == (velocity.y == 0) &&
+    //     playerDistance.y > 0 == velocity.y > 0;
 
-    if ((!xSignsMatch && velocity.x != 0) || (!ySignsMatch && velocity.y != 0)) {
-        if (std::abs(playerDistance.x) > std::abs(playerDistance.y)) {
-            float directionSign = playerDistance.x < 0 ? -1 : 1;
-            velocity = {directionSign * ATTACK_SPEED, 0};
-        } else {
-            float directionSign = playerDistance.y < 0 ? -1 : 1;
-            velocity = {0, directionSign * ATTACK_SPEED};
-        }
-    }
+    // if ((!xSignsMatch && velocity.x != 0) || (!ySignsMatch && velocity.y != 0)) {
+    //     if (std::abs(playerDistance.x) > std::abs(playerDistance.y)) {
+    //         float directionSign = playerDistance.x < 0 ? -1 : 1;
+    //         velocity = {directionSign * ATTACK_SPEED, 0};
+    //     } else {
+    //         float directionSign = playerDistance.y < 0 ? -1 : 1;
+    //         velocity = {0, directionSign * ATTACK_SPEED};
+    //     }
+    // }
 
+    velocity = getVelocityTowardPosition(playerDistance, velocity, ATTACK_SPEED);
     enemy.pos = enemy.pos - velocity;
 }
 

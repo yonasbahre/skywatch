@@ -5,6 +5,8 @@
 #include "Collider.h"
 #include "Player.h"
 
+class CrowState;
+
 class Crow : public EngineObject {
     class CrowRenderer : public Renderer {
         Crow *crow = nullptr;
@@ -32,17 +34,21 @@ class Crow : public EngineObject {
     Collider sightCollider = Collider(sightColliderSprite);
     Player &player;
 
+    CrowState *state;
+
 public:
     Crow(
         EngineObject *parent,
         Vec2D const &screenTransform_,
-        Player &player_
+        Player &player_,
+        Vec2D startPos_
     );
 
     ~Crow();
 
     Vec2D const &screenTransform;
     std::function<void(EngineObject*)> onDestroy;
+    const Vec2D startPos;
     Vec2D pos = {0, 0};
     
     Renderer *getRenderer() override;
@@ -51,4 +57,6 @@ public:
 
     void feed();
     void pluck();
+
+    void setState(CrowState *newState);
 };

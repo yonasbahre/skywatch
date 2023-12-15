@@ -133,11 +133,12 @@ void Level1::loadCrowsInSegment(int index) {
 
     // Only load 1 crow in this segment if the segment is small enough
     if (longSideLength < segmentLengthThreshold) {
-        Crow *newCrow = new Crow(&segmentParent, screenTransform, player);
-        newCrow->pos = {
+        Vec2D startPos = {
             roadRect[0] + (float) randInt(0, (int) roadRect[2]),
             roadRect[1] + (float) randInt(0, (int) roadRect[3])
         };
+        
+        Crow *newCrow = new Crow(&segmentParent, screenTransform, player, startPos);
         newCrow->onDestroy = queueForDeletion();
         segments[index].insert(newCrow);
         return;
@@ -167,11 +168,9 @@ void Level1::loadCrowsInSegment(int index) {
         };
     }
 
-    Crow *newCrow1 = new Crow(&segmentParent, screenTransform, player);
-    newCrow1->pos = pos1;
+    Crow *newCrow1 = new Crow(&segmentParent, screenTransform, player, pos1);
     newCrow1->onDestroy = queueForDeletion();
-    Crow *newCrow2 = new Crow(&segmentParent, screenTransform, player);
-    newCrow2->pos = pos2;
+    Crow *newCrow2 = new Crow(&segmentParent, screenTransform, player, pos2);
     newCrow2->onDestroy = queueForDeletion();
 
     segments[index].insert(newCrow1);

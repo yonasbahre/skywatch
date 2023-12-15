@@ -15,8 +15,6 @@ class EnemyIdleState : public EnemyState {
     const float IDLE_SPEED = 0.7;
 
     Vec2D velocity = {0, 0};
-    Vec2D getVelocityFromDirection(Direction direction);
-
 public:
     EnemyIdleState(Enemy &enemy_);
     void update();

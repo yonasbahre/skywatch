@@ -1,12 +1,17 @@
 #include "ColliderTags.h"
 #include "Crow.h"
+#include "CrowState.h"
 #include <iostream>
 
 Crow::Crow(
     EngineObject *parent, 
     Vec2D const &screenTransform_,
-    Player &player_
-) : EngineObject(parent), screenTransform(screenTransform_), player(player_) {    
+    Player &player_,
+    Vec2D startPos_
+) : EngineObject(parent), screenTransform(screenTransform_), player(player_), startPos(startPos_) {    
+    pos = startPos;
+    state = new CrowIdleState(this);
+    
     collider.tag = CROW;
     collider.onCollisionStart = [this](Collision &col) {
         if (col.other->tag == PLAYER) {
@@ -44,15 +49,21 @@ Crow::Crow(
 
 Crow::~Crow() {
     player.removeFromAdjacentCrows(this);
+    delete state;
 }
 
 Renderer *Crow::getRenderer() {
     return &renderer;
 }
 
-void Crow::start() {}
+void Crow::start() {
+    renderer.pos = this->pos + screenTransform;
+    sightColliderSprite.setPos(renderer.globalPos);
+}
 
 void Crow::update() {
+    state->update();
+
     renderer.pos = this->pos + screenTransform;
     sightColliderSprite.setPos(renderer.globalPos);
 }
@@ -65,6 +76,12 @@ void Crow::feed() {
 void Crow::pluck() {
     // TODO: implement
     std::cout << "You just plucked the crow! :(\n";
+}
+
+void Crow::setState(CrowState *newState) {
+    CrowState *oldState = state;
+    state = newState;
+    delete oldState;
 }
 
 Crow::CrowRenderer::CrowRenderer(Crow *crow) : Renderer(crow) {
