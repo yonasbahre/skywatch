@@ -4,6 +4,8 @@
 #include "Sprite.h"
 #include "Collider.h"
 #include "Player.h"
+#include "CrowField.h"
+#include "LevelUI.h"
 
 class CrowState;
 
@@ -29,19 +31,26 @@ class Crow : public EngineObject {
         "assets/1x1.png"
     );
 
-    // This collider is used to determine whether a crow
-    // is close enough to "see" the player
+    // If the player is inside this collider, then the crow can "see" the player
     Collider sightCollider = Collider(sightColliderSprite);
     Player &player;
+    CrowField &crowField;
+    LevelUI &ui;
 
     CrowState *state;
+
+    std::function<void()> increaseEnemyAttackRadiuses;
+    float agitation = 0;
 
 public:
     Crow(
         EngineObject *parent,
         Vec2D const &screenTransform_,
         Player &player_,
-        Vec2D startPos_
+        Vec2D startPos_,
+        CrowField &crowField_,
+        LevelUI &levelUI_,
+        std::function<void()> increaseEnemyAttackRadiuses_
     );
 
     ~Crow();
@@ -50,6 +59,8 @@ public:
     std::function<void(EngineObject*)> onDestroy;
     const Vec2D startPos;
     Vec2D pos = {0, 0};
+
+    bool canTakeAction = true;
     
     Renderer *getRenderer() override;
     void start();
@@ -57,6 +68,11 @@ public:
 
     void feed();
     void pluck();
+    void caw();
+    void dropPebble();
+
+    float getAgitation();
+    void setAgitation(float agitation);
 
     void setState(CrowState *newState);
 };

@@ -6,6 +6,7 @@
 #include "LevelMap.h"
 #include "LevelUI.h"
 #include "Direction.h"
+#include "CrowField.h"
 
 class Level1 : public EngineObject {
     const Vec2D baseScreenTransform = 
@@ -14,12 +15,13 @@ class Level1 : public EngineObject {
 
     LevelMap map = LevelMap(this, screenTransform);
     LevelUI ui = LevelUI(this);
+    CrowField crowField;
 
     Player player = Player(
         this,
         ui,
-        getRoadSegmentOfPoint(),
-        updateCurrRoadSegment(),
+        getRoadSegmentOfPointCallback(),
+        updateCurrRoadSegmentCallback(),
         fireProjectileCallback()
     );
     
@@ -48,8 +50,10 @@ class Level1 : public EngineObject {
     void loadBreadInSegment(int index);
     void loadPebblesInSegment(int index);
 
-    std::function<int(Vec2D)> getRoadSegmentOfPoint();
-    std::function<void(int)> updateCurrRoadSegment();
+    std::function<int(Vec2D)> getRoadSegmentOfPointCallback();
+    std::function<void(int)> updateCurrRoadSegmentCallback();
+
+    std::function<void()> increaseEnemyAttackRadiusCallback();
     
     // Items are not actually deleted from a segment until
     // the start of the next frame

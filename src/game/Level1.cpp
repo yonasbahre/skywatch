@@ -138,7 +138,15 @@ void Level1::loadCrowsInSegment(int index) {
             roadRect[1] + (float) randInt(0, (int) roadRect[3])
         };
         
-        Crow *newCrow = new Crow(&segmentParent, screenTransform, player, startPos);
+        Crow *newCrow = new Crow(
+            &segmentParent, 
+            screenTransform, 
+            player, 
+            startPos, 
+            crowField, 
+            ui,
+            increaseEnemyAttackRadiusCallback()
+        );
         newCrow->onDestroy = queueForDeletion();
         segments[index].insert(newCrow);
         return;
@@ -168,9 +176,25 @@ void Level1::loadCrowsInSegment(int index) {
         };
     }
 
-    Crow *newCrow1 = new Crow(&segmentParent, screenTransform, player, pos1);
+    Crow *newCrow1 = new Crow(
+        &segmentParent, 
+        screenTransform, 
+        player, 
+        pos1, 
+        crowField, 
+        ui,
+        increaseEnemyAttackRadiusCallback()
+    );
     newCrow1->onDestroy = queueForDeletion();
-    Crow *newCrow2 = new Crow(&segmentParent, screenTransform, player, pos2);
+    Crow *newCrow2 = new Crow(
+        &segmentParent, 
+        screenTransform, 
+        player, 
+        pos2, 
+        crowField, 
+        ui,
+        increaseEnemyAttackRadiusCallback()
+    );
     newCrow2->onDestroy = queueForDeletion();
 
     segments[index].insert(newCrow1);
@@ -215,7 +239,7 @@ void Level1::loadPebblesInSegment(int index) {
     segments[index].insert(newPebble);  
 }
 
-std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {
+std::function<int(Vec2D)> Level1::getRoadSegmentOfPointCallback() {
     return [this](Vec2D point) {
         float x1 = map.roadCoords[currSegment][0];
         float x2 = x1 + map.roadCoords[currSegment][2];
@@ -267,7 +291,7 @@ std::function<int(Vec2D)> Level1::getRoadSegmentOfPoint() {
     };
 }
 
-std::function<void(int)> Level1::updateCurrRoadSegment() {
+std::function<void(int)> Level1::updateCurrRoadSegmentCallback() {
     return [this](int index) {
         if (currSegment == index) {
             return;
@@ -318,5 +342,23 @@ std::function<void(Direction)> Level1::fireProjectileCallback() {
             lastDirection
         );
         projectile->registerAndStart();
+    };
+}
+
+std::function<void()> Level1::increaseEnemyAttackRadiusCallback() {
+    return [this]() {
+        for (
+            int segment = std::max(0, currSegment - LEFT_WINDOW_SIZE);
+            segment <= std::min((int) segments.size() - 1, currSegment + RIGHT_WINDOW_SIZE);
+            segment++
+        ) {
+            for (EngineObject *entity : segments[segment]) {
+                Enemy *enemy = dynamic_cast<Enemy*>(entity);
+                if (!enemy) {
+                    continue;
+                }
+                enemy->increaseAttackDistance();
+            }
+        }
     };
 }

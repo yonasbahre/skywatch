@@ -19,6 +19,7 @@ class Enemy : public EngineObject {
 public:
     static const float DAMAGE_DEALT;
     const float INITIAL_ATTACK_DISTANCE = 400;
+    const float ATTACK_DISTANCE_INCREASE = 200;
     float attackDistance = INITIAL_ATTACK_DISTANCE;
 
     Enemy(
@@ -40,4 +41,5 @@ public:
 
     void setState(EnemyState *newState);
     Vec2D getPlayerDistance();
+    void increaseAttackDistance();
 };

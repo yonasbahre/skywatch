@@ -62,6 +62,10 @@ void Enemy::handlePlayerCollision() {
     setState(new EnemyCooldownState(*this));
 }
 
+void Enemy::increaseAttackDistance() {
+    attackDistance += ATTACK_DISTANCE_INCREASE;
+}
+
 EnemyRenderer::EnemyRenderer(Enemy *enemy) : Renderer(enemy) {
     this->enemy = enemy;
     sprite.setIsCentered(true);

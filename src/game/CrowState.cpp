@@ -6,16 +6,15 @@
 
 CrowState::CrowState(Crow *crow_) {
     this->crow = crow_;
-    std::cout << (&crow == nullptr) << std::endl;
 }
 
 CrowIdleState::CrowIdleState(Crow *crow_) : CrowState(crow) {
     Direction direction = (Direction) randInt(0, 3);
     velocity = getVelocityFromDirection(direction, IDLE_SPEED);
-    std::cout << (&crow == nullptr) << std::endl;
 }
 
-void CrowIdleState::update() {    
+void CrowIdleState::update(Crow *crow) {    
+    this->crow = crow;
     if (
         crow->startPos.x + MAX_IDLE_DIST <= crow->pos.x ||
         crow->startPos.x - MAX_IDLE_DIST >= crow->pos.x ||
@@ -29,4 +28,14 @@ void CrowIdleState::update() {
     }
 
     crow->pos = crow->pos + velocity;
+}
+
+CrowGiftingPebbleState::CrowGiftingPebbleState(Crow *crow_) : CrowState(crow) {
+    // TODO: implement
+}
+
+void CrowGiftingPebbleState::update(Crow *crow) {
+    this->crow = crow;
+
+    // TODO: implement
 }

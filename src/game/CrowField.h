@@ -15,13 +15,12 @@ class CrowField {
     std::vector<Incident> incidents;
 
 public:
-    const float POSITIVE_INTERACTION = 500;
-    const float VERY_POSITIVE_INTERACTION = 1500;
-    const float NEGATIVE_INTERACTION = -500;
-    const float VERY_NEGATIVE_INTERACTION = -1500;
+    const float POSITIVE_INTERACTION = 1000;
+    const float NEGATIVE_INTERACTION = -5000;
+    const float VERY_NEGATIVE_INTERACTION = -10000;
 
     // pixels per millisecond
-    const float SPREAD_SPEED = 10 / 1000;
+    const float SPREAD_SPEED = 500 / 1000;
 
     void addIncident(float score, Vec2D position);
     float getAgitation(Vec2D position);

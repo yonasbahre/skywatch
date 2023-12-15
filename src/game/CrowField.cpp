@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cmath>
+#include <algorithm>
 #include "CrowField.h"
 
 void CrowField::addIncident(float score, Vec2D position) {
@@ -27,14 +28,21 @@ float CrowField::getAgitation(Vec2D position) {
 
     for (Incident &incident : incidents) {
         Vec2D distance = position - incident.position;
-        float distMagnitude = std::sqrt(
-            (distance.x * distance.x) + (distance.y * distance.y)
-        );
+        Vec2D absDistance = {std::abs(distance.x), std::abs(distance.y)};
 
         long long timeDiff = now - incident.timestamp;
         float spreadRadius = timeDiff * SPREAD_SPEED;
+        
+        Vec2D distAfterSpread = {
+            std::max(0.0f, absDistance.x - spreadRadius),
+            std::max(0.0f, absDistance.y - spreadRadius)
+        };
 
-        float thisAgitation = incident.score / (distMagnitude - spreadRadius);
+        float distMagnitude = std::sqrt(
+            (std::pow(distAfterSpread.x, 2.0)) + (std::pow(distAfterSpread.y, 2.0))
+        );
+
+        float thisAgitation = (200 * incident.score) / (distMagnitude + 1);
         agitation += thisAgitation;
     }
 

@@ -159,6 +159,10 @@ Vec2D Player::getWorldPos() {
     return worldPos;
 }
 
+Vec2D Player::getAdjustedPos() {
+    return worldPos * Vec2D(-1, -1);
+}
+
 void Player::decreaseHealth(float amount) {
     float prevHealth = health;
     health -= amount;

@@ -75,6 +75,7 @@ public:
 
     void setWorldPos(Vec2D worldPos);
     Vec2D getWorldPos();
+    Vec2D getAdjustedPos();
 
     void decreaseHealth(float amount);
 
