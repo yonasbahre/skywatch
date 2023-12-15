@@ -26,7 +26,7 @@ class Player : public EngineObject {
     Collider collider = Collider(renderer.sprite);
     LevelUI &ui;
 
-    const float speed = 0.2;
+    const float speed = 1;
     const float sprintScale = 3;
     Vec2D worldPos = Vec2D(0, 0);
     Direction lastDirection = UP;

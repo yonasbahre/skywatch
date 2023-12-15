@@ -19,7 +19,7 @@ class Projectile : public EngineObject {
     ProjectileRenderer renderer = ProjectileRenderer(this);
     Collider collider = Collider(renderer.sprite);
 
-    const float SPEED = 1.0f;
+    const float SPEED = 8.0f;
     Direction direction = UP;
     Vec2D velocity = {0, 0};
     

@@ -10,6 +10,9 @@
 #include "CollisionManager.h"
 
 class Engine {
+    const int MAX_FRAMERATE = 120;
+    const int FRAME_TIME_MILLISECONDS = 1000 / MAX_FRAMERATE;
+
     Engine();
 
     std::unordered_map<std::string, std::function<EngineObject*()>> levelRegistry;

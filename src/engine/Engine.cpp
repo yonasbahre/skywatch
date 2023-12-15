@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
+#include <chrono>
 
 #include "Engine.h"
 #include "Constants.h"
@@ -148,11 +149,26 @@ inline void Engine::render() {
 }
 
 int Engine::run() {
+    using namespace std::chrono;
     start();
 
     while (!quit) {
+        milliseconds frameStartTime = duration_cast<milliseconds>(
+            system_clock::now().time_since_epoch()
+        );
+        long long frameEndTime = frameStartTime.count() + FRAME_TIME_MILLISECONDS;
+
         update();
         render();
+
+        do {
+            milliseconds now = duration_cast<milliseconds>(
+                system_clock::now().time_since_epoch()
+            );
+            if (now.count() >= frameEndTime) {
+                break;
+            }
+        } while (true);
     }
 
     return EXIT_SUCCESS;

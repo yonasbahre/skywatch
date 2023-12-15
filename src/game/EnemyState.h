@@ -12,7 +12,7 @@ public:
 
 class EnemyIdleState : public EnemyState {
     const float MAX_IDLE_DIST = 300;
-    const float IDLE_SPEED = 0.07;
+    const float IDLE_SPEED = 0.7;
 
     Vec2D velocity = {0, 0};
     Vec2D getVelocityFromDirection(Direction direction);
@@ -23,7 +23,7 @@ public:
 };
 
 class EnemyAttackState : public EnemyState {
-    const float ATTACK_SPEED = 0.3;
+    const float ATTACK_SPEED = 1.5;
     Vec2D velocity = {0, 0};
 
 public:
