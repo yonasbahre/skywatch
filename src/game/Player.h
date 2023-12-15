@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <unordered_set>
 #include "EngineObject.h"
 #include "Sprite.h"
 #include "EventManager.h"
@@ -7,6 +8,8 @@
 #include "LevelUI.h"
 #include "Constants.h"
 #include "Direction.h"
+
+class Crow;
 
 class Player : public EngineObject {
     class PlayerRenderer : public Renderer {
@@ -31,6 +34,10 @@ class Player : public EngineObject {
     const float MAX_HEALTH = 100;
     float health = MAX_HEALTH;
 
+    const float STAMINA_DECREASE = 0.0005f;
+    const float STAMINA_INCREASE = 3.0f;
+    float stamina = 20;
+
     float breadCount = 0;
     int ammoCount = 8;
 
@@ -42,6 +49,14 @@ class Player : public EngineObject {
 
     std::function<void(Direction)> fireProjectile;
     bool isSpacebarDown = false;
+
+    void decreaseStamina();
+    bool isEKeyDown = false;
+    bool isFKeyDown = false;
+    bool isQKeyDown = false;
+    void eatBread();
+
+    std::unordered_set<Crow*> adjacentCrows;
 
 public:
     Player(
@@ -62,4 +77,7 @@ public:
     Vec2D getWorldPos();
 
     void decreaseHealth(float amount);
+
+    void addToAdjacentCrows(Crow *crow);
+    void removeFromAdjacentCrows(Crow *crow);
 };

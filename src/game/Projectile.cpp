@@ -13,7 +13,7 @@ Projectile::Projectile(
 {
     collider.tag = PLAYER_PROJECTILE;
     collider.onCollisionStart = [this](Collision col) {
-        if (col.other->tag == ENEMY) {
+        if (col.other->tag == ENEMY || col.other->tag == CROW) {
             deleteOnNextFrame = true;
         }
     };

@@ -28,13 +28,19 @@ LevelUI::LevelUIRenderer::LevelUIRenderer(LevelUI *ui) : Renderer(ui) {
     healthText.setText("Health: 100");
     healthText.setPos({10, 10});
     
+    staminaText.setText("Stamina: 0");
+    staminaText.setPos({10, 20 + healthText.getDimensions().y});
+
     breadCountText.setText("Bread: 0");
-    breadCountText.setPos({10, 20 + healthText.getDimensions().y});
+    breadCountText.setPos({
+        10, 
+        30 + healthText.getDimensions().y + staminaText.getDimensions().y
+    });
 
     ammoCountText.setText("Ammo: 5");
     ammoCountText.setPos({
         10,
-        30 + healthText.getDimensions().y + breadCountText.getDimensions().y
+        40 + healthText.getDimensions().y + staminaText.getDimensions().y + breadCountText.getDimensions().y
     });
 
     consoleText.setText("Sample Console Text");
@@ -46,6 +52,7 @@ LevelUI::LevelUIRenderer::~LevelUIRenderer() {}
 
 void LevelUI::LevelUIRenderer::render() {
     healthText.draw();
+    staminaText.draw();
     breadCountText.draw();
     ammoCountText.draw();
     consoleText.draw();
@@ -53,6 +60,10 @@ void LevelUI::LevelUIRenderer::render() {
 
 void LevelUI::updateHealthUI(float health) {
     renderer.healthText.setText("Health: " + std::to_string((int) health));
+}
+
+void LevelUI::updateStaminaUI(float stamina) {
+    renderer.staminaText.setText("Stamina: " + std::to_string((int) stamina));
 }
 
 void LevelUI::updateBreadCountUI(float breadCount) {

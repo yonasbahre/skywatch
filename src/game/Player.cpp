@@ -5,6 +5,7 @@
 #include "ColliderTags.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Crow.h"
 #include "SDLUtils.h"
 
 Player::Player(
@@ -47,25 +48,41 @@ Renderer *Player::getRenderer() {
 void Player::start() {
     health = MAX_HEALTH;
     ui.updateHealthUI(health);
+    ui.updateStaminaUI(stamina);
     ui.updateBreadCountUI(breadCount);
     ui.updateAmmoCountUI(ammoCount);
 }
 
 void Player::update() {
-    float scaleFactor = eventMgr->keyStates[SDL_SCANCODE_LSHIFT] ? sprintScale : 1;
+    bool isSprinting = 
+        (eventMgr->keyStates[SDL_SCANCODE_LSHIFT] || eventMgr->keyStates[SDL_SCANCODE_RSHIFT]) && 
+        stamina > 0.0f;
+    float scaleFactor = isSprinting ? sprintScale : 1;
 
     if (eventMgr->keyStates[SDL_SCANCODE_W] || eventMgr->keyStates[SDL_SCANCODE_UP]) {
         setWorldPos(worldPos + Vec2D(0, scaleFactor * speed));
         lastDirection = UP;
+        if (isSprinting) {
+            decreaseStamina();
+        }
     } else if (eventMgr->keyStates[SDL_SCANCODE_S] || eventMgr->keyStates[SDL_SCANCODE_DOWN]) {
         setWorldPos(worldPos + Vec2D(0, scaleFactor * -speed));
         lastDirection = DOWN;
+        if (isSprinting) {
+            decreaseStamina();
+        }
     } else if (eventMgr->keyStates[SDL_SCANCODE_A] || eventMgr->keyStates[SDL_SCANCODE_LEFT]) {
         setWorldPos(worldPos + Vec2D(scaleFactor * speed, 0));
         lastDirection = LEFT;
+        if (isSprinting) {
+            decreaseStamina();
+        }
     } else if (eventMgr->keyStates[SDL_SCANCODE_D] || eventMgr->keyStates[SDL_SCANCODE_RIGHT]) {
         setWorldPos(worldPos + Vec2D(scaleFactor * -speed, 0));
         lastDirection = RIGHT;
+        if (isSprinting) {
+            decreaseStamina();
+        }
     }
 
     if (eventMgr->keyStates[SDL_SCANCODE_SPACE]) {
@@ -77,6 +94,43 @@ void Player::update() {
         }
     } else {
         isSpacebarDown = false;
+    }
+
+    if (eventMgr->keyStates[SDL_SCANCODE_E]) {
+        if (!isEKeyDown && breadCount > 0) {
+            eatBread();
+            isEKeyDown = true;
+        }
+    } else {
+        isEKeyDown = false;
+    }
+
+    if (eventMgr->keyStates[SDL_SCANCODE_F]) {
+        if (!isFKeyDown && breadCount > 0) {
+            for (Crow *crow : adjacentCrows) {
+                crow->feed();
+            }
+            breadCount--;
+            ui.updateBreadCountUI(breadCount);
+            ui.sendMsgToConsole("You just fed a crow!");
+            isFKeyDown = true;
+        }
+    } else {
+        isFKeyDown = false;
+    }
+
+    if (eventMgr->keyStates[SDL_SCANCODE_Q]) {
+        if (!isQKeyDown) {
+            for (Crow *crow : adjacentCrows) {
+                crow->pluck();
+            }
+            ammoCount += 5;
+            ui.updateAmmoCountUI(ammoCount);
+            ui.sendMsgToConsole("You just plucked a crow's feathers! Arrows created.");
+            isQKeyDown = true;
+        }
+    } else {
+        isQKeyDown = false;
     }
 }
 
@@ -116,6 +170,14 @@ void Player::decreaseHealth(float amount) {
     }
 }
 
+void Player::addToAdjacentCrows(Crow *crow) {
+    adjacentCrows.insert(crow);
+}
+
+void Player::removeFromAdjacentCrows(Crow *crow) {
+    adjacentCrows.erase(crow);
+}
+
 void Player::pickupBread() {
     breadCount += 4;
     ui.updateBreadCountUI(breadCount);
@@ -125,6 +187,24 @@ void Player::pickupBread() {
 void Player::pickupAmmo() {
     ammoCount += 2;
     ui.updateAmmoCountUI(ammoCount);
+}
+
+void Player::decreaseStamina() {
+    int oldRoundedStamina = (int) stamina;
+    stamina -= STAMINA_DECREASE;
+    int newRoundedStamina = (int) stamina;
+
+    if (newRoundedStamina != oldRoundedStamina) {
+        ui.updateStaminaUI(stamina);
+    }
+}
+
+void Player::eatBread() {
+    stamina += STAMINA_INCREASE;
+    breadCount--;
+    ui.updateStaminaUI(stamina);
+    ui.updateBreadCountUI(breadCount);
+    ui.sendMsgToConsole("You ate some bread!");
 }
 
 Player::PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {

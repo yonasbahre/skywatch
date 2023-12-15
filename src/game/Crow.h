@@ -3,6 +3,7 @@
 #include "EngineObject.h"
 #include "Sprite.h"
 #include "Collider.h"
+#include "Player.h"
 
 class Crow : public EngineObject {
     class CrowRenderer : public Renderer {
@@ -29,11 +30,13 @@ class Crow : public EngineObject {
     // This collider is used to determine whether a crow
     // is close enough to "see" the player
     Collider sightCollider = Collider(sightColliderSprite);
+    Player &player;
 
 public:
     Crow(
         EngineObject *parent,
-        Vec2D const &screenTransform_
+        Vec2D const &screenTransform_,
+        Player &player_
     );
 
     ~Crow();
@@ -45,4 +48,7 @@ public:
     Renderer *getRenderer() override;
     void start();
     void update();
+
+    void feed();
+    void pluck();
 };

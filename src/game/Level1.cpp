@@ -83,11 +83,11 @@ void Level1::loadEnemiesInSegment(int index) {
 
     // Only load 1 enemy in this segment if the segment is small enough
     if (longSideLength < segmentLengthThreshold) {
-        Enemy *newEnemy = new Enemy(&segmentParent, screenTransform);
-        newEnemy->pos = {
+        Vec2D startPos = {
             roadRect[0] + (float) randInt(0, (int) roadRect[2]),
             roadRect[1] + (float) randInt(0, (int) roadRect[3])
-        };
+        };        
+        Enemy *newEnemy = new Enemy(&segmentParent, screenTransform, startPos);
         newEnemy->onDestroy = queueForDeletion();
         segments[index].insert(newEnemy);
         return;
@@ -117,11 +117,9 @@ void Level1::loadEnemiesInSegment(int index) {
         };
     }
 
-    Enemy *newEnemy1 = new Enemy(&segmentParent, screenTransform);
-    newEnemy1->pos = pos1;
+    Enemy *newEnemy1 = new Enemy(&segmentParent, screenTransform, pos1);
     newEnemy1->onDestroy = queueForDeletion();
-    Enemy *newEnemy2 = new Enemy(&segmentParent, screenTransform);
-    newEnemy2->pos = pos2;
+    Enemy *newEnemy2 = new Enemy(&segmentParent, screenTransform, pos2);
     newEnemy2->onDestroy = queueForDeletion();
 
     segments[index].insert(newEnemy1);
@@ -135,7 +133,7 @@ void Level1::loadCrowsInSegment(int index) {
 
     // Only load 1 crow in this segment if the segment is small enough
     if (longSideLength < segmentLengthThreshold) {
-        Crow *newCrow = new Crow(&segmentParent, screenTransform);
+        Crow *newCrow = new Crow(&segmentParent, screenTransform, player);
         newCrow->pos = {
             roadRect[0] + (float) randInt(0, (int) roadRect[2]),
             roadRect[1] + (float) randInt(0, (int) roadRect[3])
@@ -169,10 +167,10 @@ void Level1::loadCrowsInSegment(int index) {
         };
     }
 
-    Crow *newCrow1 = new Crow(&segmentParent, screenTransform);
+    Crow *newCrow1 = new Crow(&segmentParent, screenTransform, player);
     newCrow1->pos = pos1;
     newCrow1->onDestroy = queueForDeletion();
-    Crow *newCrow2 = new Crow(&segmentParent, screenTransform);
+    Crow *newCrow2 = new Crow(&segmentParent, screenTransform, player);
     newCrow2->pos = pos2;
     newCrow2->onDestroy = queueForDeletion();
 

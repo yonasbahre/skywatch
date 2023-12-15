@@ -4,18 +4,24 @@
 
 Crow::Crow(
     EngineObject *parent, 
-    Vec2D const &screenTransform_
-) : EngineObject(parent), screenTransform(screenTransform_) {    
+    Vec2D const &screenTransform_,
+    Player &player_
+) : EngineObject(parent), screenTransform(screenTransform_), player(player_) {    
     collider.tag = CROW;
-    collider.onCollisionStart = [](Collision &col) {
+    collider.onCollisionStart = [this](Collision &col) {
         if (col.other->tag == PLAYER) {
             std::cout << "You just hit a crow\n";
+            player.addToAdjacentCrows(this);
+        } else if (col.other->tag == PLAYER_PROJECTILE) {
+            std::cout << "Uh oh, you just hit a crow!\n";
+            // TODO: Respond to being hit (crowfield)
         }
     };
 
-    collider.onCollisionExit = [](Collision &col) {
+    collider.onCollisionExit = [this](Collision &col) {
         if (col.other->tag == PLAYER) {
-            std::cout << "Collision exited\n";
+            std::cout << "Collision with crow exited\n";
+            player.removeFromAdjacentCrows(this);
         }
     };
 
@@ -36,7 +42,9 @@ Crow::Crow(
     };
 }
 
-Crow::~Crow() {}
+Crow::~Crow() {
+    player.removeFromAdjacentCrows(this);
+}
 
 Renderer *Crow::getRenderer() {
     return &renderer;
@@ -47,6 +55,16 @@ void Crow::start() {}
 void Crow::update() {
     renderer.pos = this->pos + screenTransform;
     sightColliderSprite.setPos(renderer.globalPos);
+}
+
+void Crow::feed() {
+    // TODO: implement
+    std::cout << "You fed the crow!\n";
+}
+
+void Crow::pluck() {
+    // TODO: implement
+    std::cout << "You just plucked the crow! :(\n";
 }
 
 Crow::CrowRenderer::CrowRenderer(Crow *crow) : Renderer(crow) {
