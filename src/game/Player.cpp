@@ -30,9 +30,6 @@ Player::Player(
         } else if (col.other->tag == PEBBLE) {
             pickupAmmo();
             ui.sendMsgToConsole("You picked up some pebbles!");
-        } else if (col.other->tag == CROW) {
-            // TODO: for testing, delete later
-            ui.sendMsgToConsole("You hit a crow!");
         }
     };
 
@@ -183,7 +180,7 @@ void Player::removeFromAdjacentCrows(Crow *crow) {
 }
 
 void Player::pickupBread() {
-    breadCount += 4;
+    breadCount += 2;
     ui.updateBreadCountUI(breadCount);
     ui.sendMsgToConsole("You picked up some bread!");
 }
@@ -213,19 +210,11 @@ void Player::eatBread() {
 
 Player::PlayerRenderer::PlayerRenderer(Player *object) : Renderer(object) {
     sprite.setIsCentered(true);
-    sprite.scaleDimensions(0.25);
+    sprite.scaleDimensions(1.4);
 }
 
 Player::PlayerRenderer::~PlayerRenderer() {}
 
 void Player::PlayerRenderer::render() {
-    setSDLDrawColor(sdlRenderer, {255, 0, 0});
-    SDL_Rect colliderRect = {           // For debugging only, delete when done
-        (int) sprite.getCorners()[0],
-        (int) sprite.getCorners()[1],
-        (int) sprite.getDimensions().x,
-        (int) sprite.getDimensions().y    
-    };
-    SDL_RenderDrawRect(sdlRenderer, &colliderRect);
     sprite.draw(globalPos);
 }

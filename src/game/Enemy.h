@@ -34,11 +34,13 @@ public:
     std::function<void(EngineObject*)> onDestroy;
     const Vec2D startPos;
     Vec2D pos = {0, 0};
+    static std::unordered_set<Enemy*> attackingEnemies;
 
     Renderer *getRenderer() override;
     void start();
     void update();
 
+    EnemyState *getState();
     void setState(EnemyState *newState);
     Vec2D getPlayerDistance();
     void increaseAttackDistance();

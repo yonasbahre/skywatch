@@ -4,7 +4,9 @@
 #include "EnemyState.h"
 #include <iostream>
 
-const float Enemy::DAMAGE_DEALT = 10;
+const float Enemy::DAMAGE_DEALT = 5;
+
+std::unordered_set<Enemy*> Enemy::attackingEnemies = std::unordered_set<Enemy*>();
 
 Enemy::Enemy(
     EngineObject *parent,
@@ -31,6 +33,7 @@ Enemy::Enemy(
 }
 
 Enemy::~Enemy() {
+    attackingEnemies.erase(this);
     delete state;
 }
 
@@ -66,10 +69,14 @@ void Enemy::increaseAttackDistance() {
     attackDistance += ATTACK_DISTANCE_INCREASE;
 }
 
+EnemyState *Enemy::getState() {
+    return state;
+}
+
 EnemyRenderer::EnemyRenderer(Enemy *enemy) : Renderer(enemy) {
     this->enemy = enemy;
     sprite.setIsCentered(true);
-    sprite.scaleDimensions(0.35);
+    sprite.scaleDimensions(1.4);
 }
 
 EnemyRenderer::~EnemyRenderer() {}

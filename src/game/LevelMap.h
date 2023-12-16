@@ -33,12 +33,7 @@ public:
 
     Vec2D const &screenTransform;
     const float ROAD_WIDTH = 600;
-    std::vector<std::vector<float>> roadCoords; 
-    // = {
-    //     {0, 0, 0, 500},
-    //     {0, 500, 750, 500},
-    //     {750, 500, 750, 1500}
-    // };
+    std::vector<std::vector<float>> roadCoords;
 
     Renderer *getRenderer() override;
     void start();

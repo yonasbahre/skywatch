@@ -54,6 +54,7 @@ class Level1 : public EngineObject {
     std::function<void(int)> updateCurrRoadSegmentCallback();
 
     std::function<void()> increaseEnemyAttackRadiusCallback();
+    std::function<void(Vec2D)> spawnPebbleCallback();
     
     // Items are not actually deleted from a segment until
     // the start of the next frame

@@ -6,6 +6,7 @@
 #include "Bread.h"
 #include "Pebble.h"
 #include "Projectile.h"
+#include "FinishFlag.h"
 
 Level1::Level1() {
     segments = 
@@ -51,6 +52,17 @@ void Level1::loadSegment(int index) {
     loadCrowsInSegment(index);
     loadBreadInSegment(index);
     loadPebblesInSegment(index);
+
+    if (index == segments.size() - 1) {
+        std::vector<float> roadRect = map.roadCoords[index];
+
+        FinishFlag *finish = new FinishFlag(&segmentParent, screenTransform);
+        finish->getRenderer()->pos = {
+            roadRect[0] + (roadRect[2] / 2),
+            roadRect[1] + (roadRect[3] / 2)
+        };
+        segments[index].insert(finish);
+    }
 }
 
 void Level1::unloadSegment(int index) {
@@ -145,7 +157,8 @@ void Level1::loadCrowsInSegment(int index) {
             startPos, 
             crowField, 
             ui,
-            increaseEnemyAttackRadiusCallback()
+            increaseEnemyAttackRadiusCallback(),
+            spawnPebbleCallback()
         );
         newCrow->onDestroy = queueForDeletion();
         segments[index].insert(newCrow);
@@ -183,7 +196,8 @@ void Level1::loadCrowsInSegment(int index) {
         pos1, 
         crowField, 
         ui,
-        increaseEnemyAttackRadiusCallback()
+        increaseEnemyAttackRadiusCallback(),
+        spawnPebbleCallback()
     );
     newCrow1->onDestroy = queueForDeletion();
     Crow *newCrow2 = new Crow(
@@ -193,7 +207,8 @@ void Level1::loadCrowsInSegment(int index) {
         pos2, 
         crowField, 
         ui,
-        increaseEnemyAttackRadiusCallback()
+        increaseEnemyAttackRadiusCallback(),
+        spawnPebbleCallback()
     );
     newCrow2->onDestroy = queueForDeletion();
 
@@ -360,5 +375,16 @@ std::function<void()> Level1::increaseEnemyAttackRadiusCallback() {
                 enemy->increaseAttackDistance();
             }
         }
+    };
+}
+
+std::function<void(Vec2D)> Level1::spawnPebbleCallback() {
+    return [this](Vec2D crowPos) {
+        Pebble *newPebble = new Pebble(&segmentParent, screenTransform);
+        newPebble->getRenderer()->pos = crowPos;
+        newPebble->onDestroy = queueForDeletion();
+
+        segments[currSegment].insert(newPebble);
+        newPebble->registerAndStart();
     };
 }

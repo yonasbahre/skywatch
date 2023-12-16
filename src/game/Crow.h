@@ -40,7 +40,10 @@ class Crow : public EngineObject {
     CrowState *state;
 
     std::function<void()> increaseEnemyAttackRadiuses;
+    std::function<void(Vec2D)> spawnPebble;
     float agitation = 0;
+
+    void handleCrowSeeingPlayer();
 
 public:
     Crow(
@@ -50,7 +53,8 @@ public:
         Vec2D startPos_,
         CrowField &crowField_,
         LevelUI &levelUI_,
-        std::function<void()> increaseEnemyAttackRadiuses_
+        std::function<void()> increaseEnemyAttackRadiuses_,
+        std::function<void(Vec2D)> spawnPebble_
     );
 
     ~Crow();
@@ -73,6 +77,7 @@ public:
 
     float getAgitation();
     void setAgitation(float agitation);
+    Vec2D getPlayerDistance();
 
     void setState(CrowState *newState);
 };

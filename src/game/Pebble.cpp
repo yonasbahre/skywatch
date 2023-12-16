@@ -25,7 +25,7 @@ void Pebble::update() {}
 
 Pebble::PebbleRenderer::PebbleRenderer(Pebble *pebble) : Renderer(pebble) {
     this->pebble = pebble;
-    sprite.scaleDimensions(0.02);
+    sprite.scaleDimensions(0.6);
     sprite.setIsCentered(true);
 }
 

@@ -79,7 +79,7 @@ int Projectile::destroyAfterTimer(void *thisProjectile) {
 Projectile::ProjectileRenderer::ProjectileRenderer(Projectile *projectile)
     : Renderer(projectile) {
     this->projectile = projectile;
-    sprite.scaleDimensions(0.02);
+    sprite.scaleDimensions(0.6);
     sprite.setIsCentered(true);
 }
 

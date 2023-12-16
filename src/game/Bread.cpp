@@ -26,7 +26,7 @@ void Bread::update() {}
 
 Bread::BreadRenderer::BreadRenderer(Bread *bread) : Renderer(bread) {
     this->bread = bread;
-    sprite.scaleDimensions(0.4);
+    sprite.scaleDimensions(1.2);
     sprite.setIsCentered(true);
 }
 

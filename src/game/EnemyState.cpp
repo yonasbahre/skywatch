@@ -2,10 +2,12 @@
 #include "EnemyState.h"
 #include "Utils.h"
 #include "GameUtils.h"
+#include "Crow.h"
 
 EnemyState::EnemyState(Enemy &enemy_) : enemy(enemy_) {}
 
 EnemyIdleState::EnemyIdleState(Enemy &enemy_) : EnemyState(enemy_) {
+    Enemy::attackingEnemies.erase(&enemy);
     Direction direction = (Direction) randInt(0, 3);
     velocity = getVelocityFromDirection(direction, IDLE_SPEED);
 }
@@ -37,6 +39,7 @@ void EnemyIdleState::update() {
 
 
 EnemyAttackState::EnemyAttackState(Enemy &enemy_) : EnemyState(enemy_) {    
+    Enemy::attackingEnemies.insert(&enemy);
     Vec2D playerDistance = enemy.getPlayerDistance();
     velocity = getVelocityTowardPosition(playerDistance, {1, 1}, ATTACK_SPEED);
 }
@@ -51,31 +54,13 @@ void EnemyAttackState::update() {
         return;
     }
 
-    // bool xSignsMatch = 
-    //     playerDistance.x < 0 == velocity.x < 0 &&
-    //     (playerDistance.x == 0) == (velocity.x == 0) &&
-    //     playerDistance.x > 0 == velocity.x > 0;
-    // bool ySignsMatch =
-    //     playerDistance.y < 0 == velocity.y < 0 &&
-    //     (playerDistance.y == 0) == (velocity.y == 0) &&
-    //     playerDistance.y > 0 == velocity.y > 0;
-
-    // if ((!xSignsMatch && velocity.x != 0) || (!ySignsMatch && velocity.y != 0)) {
-    //     if (std::abs(playerDistance.x) > std::abs(playerDistance.y)) {
-    //         float directionSign = playerDistance.x < 0 ? -1 : 1;
-    //         velocity = {directionSign * ATTACK_SPEED, 0};
-    //     } else {
-    //         float directionSign = playerDistance.y < 0 ? -1 : 1;
-    //         velocity = {0, directionSign * ATTACK_SPEED};
-    //     }
-    // }
-
     velocity = getVelocityTowardPosition(playerDistance, velocity, ATTACK_SPEED);
     enemy.pos = enemy.pos - velocity;
 }
 
 EnemyCooldownState::EnemyCooldownState(Enemy &enemy_) : EnemyState(enemy_) {
     using namespace std::chrono;
+    Enemy::attackingEnemies.erase(&enemy);
 
     // Move enemy away from player so colliders are no longer touching
     Vec2D playerDistance = enemy.getPlayerDistance();
@@ -101,4 +86,41 @@ void EnemyCooldownState::update() {
         enemy.setState(new EnemyIdleState(enemy));
         return;
     }
+}
+
+EnemyFollowingCrowState::EnemyFollowingCrowState(Enemy &enemy_, Crow *crow_)
+    : EnemyState(enemy_) {
+    this->crow = crow_;
+    Vec2D dist = enemy.pos - crow_->pos;
+    Enemy::attackingEnemies.erase(&enemy);
+    velocity = getVelocityTowardPosition(dist, {1, 1}, SPEED);
+}
+
+EnemyFollowingCrowState::EnemyFollowingCrowState(Enemy &enemy_, Crow *crow_, Vec2D targetPos)
+    : EnemyState(enemy_) {
+    this->crow = crow_;
+    this->targetPos = targetPos;
+    useTargetPos = true;
+    Vec2D dist = targetPos - crow_->pos;
+    Enemy::attackingEnemies.erase(&enemy);
+    velocity = getVelocityTowardPosition(dist, {1, 1}, SPEED);
+}
+
+void EnemyFollowingCrowState::update() {
+    if (useTargetPos) {
+        Vec2D dist = enemy.pos - targetPos;
+
+        if (std::abs(dist.x) <= STOP_DIST && std::abs(dist.y) <= STOP_DIST) {
+            enemy.setState(new EnemyIdleState(enemy));
+            return;
+        }
+
+        velocity = getVelocityTowardPosition(dist, velocity, SPEED);
+        enemy.pos = enemy.pos - velocity;
+        return;
+    }
+
+    Vec2D dist = enemy.pos - crow->pos;
+    velocity = getVelocityTowardPosition(dist, velocity, SPEED);
+    enemy.pos = enemy.pos - velocity;
 }

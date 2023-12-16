@@ -16,7 +16,7 @@ class Player : public EngineObject {
     public:
         PlayerRenderer(Player *object);
         ~PlayerRenderer();
-        Sprite sprite = Sprite(this->sdlRenderer, "assets/megaman.png");
+        Sprite sprite = Sprite(this->sdlRenderer, "assets/player.png");
 
         void render();
     };
@@ -34,9 +34,9 @@ class Player : public EngineObject {
     const float MAX_HEALTH = 100;
     float health = MAX_HEALTH;
 
-    const float STAMINA_DECREASE = 0.0005f;
-    const float STAMINA_INCREASE = 3.0f;
-    float stamina = 20;
+    const float STAMINA_DECREASE = 0.002f;
+    const float STAMINA_INCREASE = 2.0f;
+    float stamina = 5;
 
     float breadCount = 0;
     int ammoCount = 8;

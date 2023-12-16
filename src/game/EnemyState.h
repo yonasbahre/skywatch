@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "Direction.h"
 
+class Crow;
+
 class EnemyState {
 public:
     Enemy &enemy;
@@ -35,5 +37,19 @@ class EnemyCooldownState : public EnemyState {
 
 public:
     EnemyCooldownState(Enemy &enemy_);
+    void update();
+};
+
+class EnemyFollowingCrowState : public EnemyState {
+    const float SPEED = 2;
+    const float STOP_DIST = 20;
+    Vec2D velocity = {0, 0};
+    Vec2D targetPos = {0, 0};
+    bool useTargetPos = false;
+    Crow *crow = nullptr;
+
+public:
+    EnemyFollowingCrowState(Enemy &enemy_, Crow *crow_);
+    EnemyFollowingCrowState(Enemy &enemy_, Crow *crow_, Vec2D targetPos);
     void update();
 };

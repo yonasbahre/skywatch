@@ -18,7 +18,7 @@ void LevelMap::start() {}
 
 void LevelMap::update() {}
 
-void LevelMap::generateRoads() {
+void LevelMap::generateRoads() {    
     startPoint = Vec2D(0, 0);
     endPoint = Vec2D(
         randInt(MIN_TOTAL_DIST, MAX_TOTAL_DIST), 

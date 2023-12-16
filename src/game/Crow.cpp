@@ -1,6 +1,8 @@
 #include "ColliderTags.h"
 #include "Crow.h"
 #include "CrowState.h"
+#include "Utils.h"
+#include "Enemy.h"
 #include <iostream>
 
 Crow::Crow(
@@ -10,14 +12,16 @@ Crow::Crow(
     Vec2D startPos_,
     CrowField &crowField_,
     LevelUI &levelUI_,
-    std::function<void()> increaseEnemyAttackRadiuses_
+    std::function<void()> increaseEnemyAttackRadiuses_,
+    std::function<void(Vec2D)> spawnPebble_
 ) : EngineObject(parent), 
     screenTransform(screenTransform_), 
     player(player_), 
     startPos(startPos_),
     crowField(crowField_),
     ui(levelUI_),
-    increaseEnemyAttackRadiuses(increaseEnemyAttackRadiuses_)
+    increaseEnemyAttackRadiuses(increaseEnemyAttackRadiuses_),
+    spawnPebble(spawnPebble_)
 {    
     pos = startPos;
     state = new CrowIdleState(this);
@@ -45,8 +49,7 @@ Crow::Crow(
     sightCollider.tag = CROW_SIGHT;
     sightCollider.onCollisionStart = [this](Collision &col) {
         if (col.other->tag == PLAYER) {
-            setAgitation(crowField.getAgitation(pos));
-            std::cout << "Agitation: " << agitation << std::endl;
+            handleCrowSeeingPlayer();
         }
     };
 
@@ -78,6 +81,31 @@ void Crow::update() {
     sightColliderSprite.setPos(renderer.globalPos);
 }
 
+void Crow::handleCrowSeeingPlayer() {
+    setAgitation(crowField.getAgitation(pos));
+    
+    if (agitation < -2000) {
+        int probability = -agitation;
+        bool willCaw = randInt(0, 10000) <= probability;
+        if (willCaw) {
+            caw();
+        }
+    }
+    else if (agitation > 1000) {
+        bool willDropPebble = randInt(0, 1);
+        if (willDropPebble) {
+            setState(new CrowGiftingPebbleState(this));
+        }
+    }
+    else if (agitation > 6000 && !Enemy::attackingEnemies.empty()) {
+        bool willScareEnemy = randInt(0, 1);
+        if (willScareEnemy) {
+            setState(new CrowFindingEnemyToDistractState(this));
+            ui.sendMsgToConsole("A crow is scaring an enemy away!");
+        }
+    }
+}
+
 void Crow::feed() {
     crowField.addIncident(crowField.POSITIVE_INTERACTION, pos);
     setAgitation(crowField.getAgitation(pos));
@@ -95,7 +123,7 @@ void Crow::caw() {
 }
 
 void Crow::dropPebble() {
-
+    spawnPebble(pos);
     ui.sendMsgToConsole("A crow gifted a pebble to you!");
     canTakeAction = false;
 }
@@ -115,9 +143,13 @@ void Crow::setAgitation(float agitation) {
     canTakeAction = true;
 }
 
+Vec2D Crow::getPlayerDistance() {
+    return pos - player.getAdjustedPos();
+}
+
 Crow::CrowRenderer::CrowRenderer(Crow *crow) : Renderer(crow) {
     this->crow = crow;
-    sprite.scaleDimensions(0.5);
+    sprite.scaleDimensions(0.9);
     sprite.setIsCentered(true);
 }
 
